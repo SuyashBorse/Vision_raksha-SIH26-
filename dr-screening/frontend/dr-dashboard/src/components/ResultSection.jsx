@@ -240,6 +240,25 @@ export default function ResultSection({ result, onValidate }) {
         </div>
       </div>
 
+      {/* ── Multi-Modal Vitals & Doctor Triage Summary ── */}
+      {result.doctor_summary && (
+        <div className="bg-indigo-50/70 border border-indigo-200 rounded-xl p-4 space-y-2">
+          <div className="flex items-center justify-between">
+            <p className="text-xs font-bold text-indigo-950 uppercase tracking-wider">
+              🏥 Multi-Modal Triage & Doctor Summary
+            </p>
+            {result.progression_risk_5yr !== undefined && (
+              <span className="text-xs font-bold text-indigo-800 bg-indigo-100 px-2.5 py-0.5 rounded-full">
+                5-Yr Progression: {result.progression_risk_5yr}%
+              </span>
+            )}
+          </div>
+          <p className="text-xs text-indigo-900 leading-relaxed font-medium">
+            {result.doctor_summary}
+          </p>
+        </div>
+      )}
+
       {/* ── Clinical findings ─────────────────────────── */}
       <div className="bg-white rounded-xl border border-gray-200 p-4">
         <p className="text-sm font-semibold text-gray-700 mb-2">Clinical Findings (AI Detected)</p>

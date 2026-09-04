@@ -36,10 +36,14 @@ api.interceptors.response.use(
 
 // ── API methods ───────────────────────────────────────────────
 
-export const analyseImage = async (file, patientId = null) => {
+export const analyseImage = async (file, patientId = null, vitals = {}) => {
   const form = new FormData();
   form.append("file", file);
   if (patientId) form.append("patient_id", patientId);
+  if (vitals?.age) form.append("age", vitals.age);
+  if (vitals?.hba1c) form.append("hba1c", vitals.hba1c);
+  if (vitals?.diabetes_years) form.append("diabetes_years", vitals.diabetes_years);
+  if (vitals?.sys_bp) form.append("sys_bp", vitals.sys_bp);
   const res = await api.post("/api/analyse", form);
   return res.data;
 };
