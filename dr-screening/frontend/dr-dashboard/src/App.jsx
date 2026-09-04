@@ -2,7 +2,7 @@
 import { BrowserRouter, Routes, Route, NavLink } from "react-router-dom";
 import { useState, useEffect } from "react";
 import {
-  Eye, LayoutDashboard, Users, FlaskConical,
+  Eye, LayoutDashboard, Users,
   Activity, Menu, X, Wifi, WifiOff, LogOut
 } from "lucide-react";
 
@@ -13,13 +13,11 @@ import LoginPage from "./pages/LoginPage";
 import ScreenPage    from "./pages/ScreenPage";
 import DashboardPage from "./pages/DashboardPage";
 import PatientsPage  from "./pages/PatientsPage";
-import LiveDemoPage  from "./pages/LiveDemoPage";
 
 const NAV = [
   { to: "/",        icon: LayoutDashboard, label: "Dashboard"  },
   { to: "/screen",  icon: Eye,             label: "Screen"     },
   { to: "/patients",icon: Users,           label: "Patients"   },
-  { to: "/demo",    icon: FlaskConical,    label: "Live Demo"  },
 ];
 
 function AuthenticatedApp() {
@@ -162,7 +160,6 @@ function AuthenticatedApp() {
             <Route path="/"         element={<DashboardPage />} />
             <Route path="/screen"   element={<ScreenPage />} />
             <Route path="/patients" element={<PatientsPage />} />
-            <Route path="/demo"     element={<LiveDemoPage />} />
           </Routes>
         </main>
       </div>
