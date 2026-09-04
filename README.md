@@ -12,6 +12,19 @@
 
 ---
 
+## 🔀 Two Separated, Modular Deliverables
+
+This project is organized into **two completely separated, standalone packages**:
+
+| Deliverable Package | Location | Target Audience / Purpose | Technology Stack |
+|---|---|---|---|
+| **1. MathWorks Submission Package** | [`matlab_submission/`](matlab_submission/README.md) | **MathWorks Evaluators & Clinical Jury**: Self-contained pipeline running 100% in MATLAB & Simulink. Zero Python or web dependencies required. | MATLAB R2022b+, Simulink, Image Processing, Computer Vision, Deep Learning, & Medical Imaging Toolboxes |
+| **2. Production Web & Edge Platform** | [`dr-screening/`](dr-screening/README.md) | **Field ASHA Workers & Primary Health Centres (PHCs)**: Offline-first PWA dashboard with 1.2s inference, local SQLite/Postgres DB, and ABDM/FHIR export. | React 19, Tailwind CSS, Vite, Workbox PWA, FastAPI, PyTorch / ONNX Runtime |
+
+> 📁 **To evaluate the MATLAB & Simulink solution independently, see the dedicated [matlab_submission/README.md](matlab_submission/README.md).**
+
+---
+
 ## 📑 Table of Contents
 1. [Problem Statement & Clinical Context](#-problem-statement--clinical-context)
 2. [Dual-Track Architecture](#-dual-track-architecture)
@@ -179,6 +192,18 @@ d:\SIH26\
 │   ├── 2_Moderate_DR_Exudates.jpg
 │   ├── 3_Severe_DR_Hemorrhages.jpg
 │   └── 4_Proliferative_DR_Neovascularization.jpg
+│
+├── matlab_submission/                         ← STANDALONE MATHWORKS SUBMISSION PACKAGE
+│   ├── README.md                              ← Dedicated MATLAB/Simulink documentation
+│   ├── dr_pipeline_demo.m                     ← Master orchestrator running all 5 modules
+│   ├── quality_assessment.m                   ← Image quality gate & 4-step enhancement
+│   ├── segment_retina.m                       ← Complete retinal anatomical segmentation
+│   ├── grade_dr.m                             ← DR grader (ONNX/PTH model import + TTA)
+│   ├── explain_gradcam.m                      ← Grad-CAM heatmap & evidence table
+│   ├── compute_metrics.m                      ← Sensitivity, specificity, QWK, ROC curves
+│   ├── sample_eye_photos/                     ← Local sample images (100% self-contained)
+│   ├── models/best_dr_model.onnx              ← Local ONNX model weights
+│   └── simulink/                              ← Simulink district screening model & simulation
 │
 └── dr-screening/
     ├── matlab/                                ← MATLAB & SIMULINK CLINICAL PIPELINE
