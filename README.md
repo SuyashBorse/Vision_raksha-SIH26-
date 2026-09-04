@@ -21,7 +21,9 @@ This project is organized into **two completely separated, standalone packages**
 | **1. MathWorks Submission Package** | [`matlab_submission/`](matlab_submission/README.md) | **MathWorks Evaluators & Clinical Jury**: Self-contained pipeline running 100% in MATLAB & Simulink. Zero Python or web dependencies required. | MATLAB R2022b+, Simulink, Image Processing, Computer Vision, Deep Learning, & Medical Imaging Toolboxes |
 | **2. Production Web & Edge Platform** | [`dr-screening/`](dr-screening/README.md) | **Field ASHA Workers & Primary Health Centres (PHCs)**: Offline-first PWA dashboard with 1.2s inference, local SQLite/Postgres DB, and ABDM/FHIR export. | React 19, Tailwind CSS, Vite, Workbox PWA, FastAPI, PyTorch / ONNX Runtime |
 
-> 📁 **To evaluate the MATLAB & Simulink solution independently, see the dedicated [matlab_submission/README.md](matlab_submission/README.md).**
+> 📁 **To evaluate the MATLAB & Simulink solution independently, see [matlab_submission/README.md](matlab_submission/README.md).**  
+> 🎯 **For line-by-line proof of compliance with every word in SIH26038, see [SIH26038_REQUIREMENTS_AND_VERIFICATION_README.md](SIH26038_REQUIREMENTS_AND_VERIFICATION_README.md).**  
+> 📚 **To understand every formula, biological lesion, and algorithm in depth, see the [docs/UNDERSTANDING_RETINAI_DEEP_DIVE.md](docs/UNDERSTANDING_RETINAI_DEEP_DIVE.md).**
 
 ---
 
