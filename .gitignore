@@ -1,0 +1,43 @@
+# Python & Virtual Environments
+venv/
+.env
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+
+# Large ML Models & Weights (> 100 MB, excluded from Git)
+*.pth
+*.pt
+*.onnx
+*.bin
+*.tflite
+*.h5
+*.ckpt
+models/*.pth
+models/*.onnx
+backend/models/*.pth
+backend/models/*.onnx
+dr-screening/backend/models/*.pth
+dr-screening/backend/models/*.onnx
+dr-screening/models/*.pth
+dr-screening/models/*.onnx
+
+# Node / Frontend
+node_modules/
+dist/
+build/
+.next/
+*.log
+
+# Databases & Local Logs
+*.db
+*.sqlite3
+server.log
+server_err.log
+
+# OS Generated
+.DS_Store
+Thumbs.db
+Desktop.ini
