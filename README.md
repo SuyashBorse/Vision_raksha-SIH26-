@@ -23,7 +23,8 @@ This project is organized into **two completely separated, standalone packages**
 
 > 📁 **To evaluate the MATLAB & Simulink solution independently, see [matlab_submission/README.md](matlab_submission/README.md).**  
 > 🎯 **For line-by-line proof of compliance with every word in SIH26038, see [SIH26038_REQUIREMENTS_AND_VERIFICATION_README.md](SIH26038_REQUIREMENTS_AND_VERIFICATION_README.md).**  
-> 📚 **To understand every formula, biological lesion, and algorithm in depth, see the [docs/UNDERSTANDING_RETINAI_DEEP_DIVE.md](docs/UNDERSTANDING_RETINAI_DEEP_DIVE.md).**
+> 📚 **To understand every formula, biological lesion, and algorithm in depth, see [docs/UNDERSTANDING_RETINAI_DEEP_DIVE.md](docs/UNDERSTANDING_RETINAI_DEEP_DIVE.md).**  
+> 🧠 **For complete deep learning model specifications, layer architecture, and loss derivations, see [docs/MODEL_ARCHITECTURE_AND_DETAILS.md](docs/MODEL_ARCHITECTURE_AND_DETAILS.md).**
 
 ---
 
