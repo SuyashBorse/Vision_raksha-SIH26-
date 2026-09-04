@@ -12,7 +12,7 @@ from typing import Optional
 
 from db.database import get_db
 from db.models   import Patient, Screening
-from auth.jwt    import get_current_user, TokenData
+from auth.jwt    import get_current_user, get_optional_user, TokenData
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -37,7 +37,7 @@ class PatientCreate(BaseModel):
 def create_patient(
     body: PatientCreate, 
     db: Session = Depends(get_db),
-    user: TokenData = Depends(get_current_user),
+    user: Optional[TokenData] = Depends(get_optional_user),
 ):
 
     # Check ABHA ID uniqueness
@@ -72,7 +72,7 @@ def list_patients(
     limit:  int           = Query(50, le=200),
     offset: int           = Query(0),
     db:     Session       = Depends(get_db),
-    user:   TokenData     = Depends(get_current_user),
+    user:   Optional[TokenData] = Depends(get_optional_user),
 ):
     q = db.query(Patient)
 
@@ -116,7 +116,7 @@ def list_patients(
 def get_patient(
     patient_id: str, 
     db: Session = Depends(get_db),
-    user: TokenData = Depends(get_current_user),
+    user: Optional[TokenData] = Depends(get_optional_user),
 ):
 
     patient = db.query(Patient).filter(Patient.id == patient_id).first()

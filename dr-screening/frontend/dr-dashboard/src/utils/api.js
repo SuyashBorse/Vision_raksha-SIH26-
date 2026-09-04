@@ -25,8 +25,8 @@ api.interceptors.response.use(
     if (err.response?.status === 401) {
       localStorage.removeItem("retinai_token");
       localStorage.removeItem("retinai_user");
-      // Reload to trigger AuthContext to show login page
-      if (window.location.pathname !== "/") {
+      // Only reload if on protected admin dashboard
+      if (window.location.pathname === "/dashboard") {
         window.location.reload();
       }
     }
