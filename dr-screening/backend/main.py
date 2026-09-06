@@ -81,15 +81,23 @@ app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # ── CORS ─────────────────────────────────────────────────────
-CORS_ORIGINS = os.getenv("CORS_ORIGINS", "http://localhost:3000,http://localhost:5173,http://localhost:8000").split(",")
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins     = CORS_ORIGINS,
-    allow_credentials = True,
-    allow_methods     = ["*"],
-    allow_headers     = ["*"],
-)
+cors_origins_str = os.getenv("CORS_ORIGINS", "*").strip()
+if cors_origins_str == "*" or os.getenv("ENVIRONMENT", "development") != "production":
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origin_regex = ".*",
+        allow_credentials  = True,
+        allow_methods      = ["*"],
+        allow_headers      = ["*"],
+    )
+else:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins      = [o.strip() for o in cors_origins_str.split(",") if o.strip()],
+        allow_credentials  = True,
+        allow_methods      = ["*"],
+        allow_headers      = ["*"],
+    )
 
 
 # ── Routes ───────────────────────────────────────────────────
@@ -112,8 +120,18 @@ app.include_router(demo_router,      prefix="/api",  tags=["Demo"])
 app.include_router(followups_router, prefix="/api",  tags=["Follow-Ups"])
 
 
+# ── Static Files & SPA Fallback (Frontend Integration) ────────
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+
+dist_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "frontend", "dr-dashboard", "dist")
+if os.path.exists(dist_dir):
+    assets_dir = os.path.join(dist_dir, "assets")
+    if os.path.exists(assets_dir):
+        app.mount("/assets", StaticFiles(directory=assets_dir), name="assets")
+
+
 # ── Health Check ─────────────────────────────────────────────
-@app.get("/", tags=["Health"])
 @app.get("/health", tags=["Health"])
 def health():
     from ai.pipeline import _pipeline
@@ -124,6 +142,19 @@ def health():
         "model_loaded": _pipeline is not None and not _pipeline.demo_mode,
         "demo_mode"   : _pipeline.demo_mode if _pipeline else True,
     }
+
+
+# ── SPA Fallback Handler ──────────────────────────────────────
+@app.get("/{full_path:path}", tags=["Frontend"])
+async def serve_spa(full_path: str):
+    if os.path.exists(dist_dir):
+        target_file = os.path.join(dist_dir, full_path)
+        if full_path and os.path.exists(target_file) and os.path.isfile(target_file):
+            return FileResponse(target_file)
+        index_file = os.path.join(dist_dir, "index.html")
+        if os.path.exists(index_file):
+            return FileResponse(index_file)
+    return JSONResponse(status_code=404, content={"error": "NOT_FOUND", "message": "Resource not found"})
 
 
 # ── Global error handler ──────────────────────────────────────
