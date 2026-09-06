@@ -2,7 +2,7 @@
 // Strategy: Cache-first for assets, Network-first for API, Offline queue for images
 // Spec: TRD Section 7 (Offline-first PWA)
 
-const CACHE_NAME     = "retinai-v3";
+const CACHE_NAME     = "retinai-v4";
 const OFFLINE_URL    = "/offline.html";
 
 // Assets to pre-cache on install
@@ -49,6 +49,11 @@ self.addEventListener("message", (event) => {
 self.addEventListener("fetch", (event) => {
   const { request } = event;
   const url = new URL(request.url);
+
+  // Bypass cache completely on localhost so UI changes reflect immediately
+  if (url.hostname === "localhost" || url.hostname === "127.0.0.1") {
+    return;
+  }
 
   // Skip non-GET for API (handled by background sync below)
   if (request.method !== "GET" && url.pathname.startsWith("/api/")) {

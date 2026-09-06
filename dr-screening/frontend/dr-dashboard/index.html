@@ -21,19 +21,30 @@
     <!-- Service Worker registration -->
     <script>
       if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js')
-            .then(reg => console.log('[SW] Registered:', reg.scope))
-            .catch(err => console.warn('[SW] Registration failed:', err));
-
-          // Listen for sync complete messages
-          navigator.serviceWorker.addEventListener('message', (event) => {
-            if (event.data?.type === 'SYNC_COMPLETE') {
-              console.log('[SW] Synced screening:', event.data.screening_id);
-              // Could show a toast notification here
+        // In local development (localhost), unregister any active service worker & purge stale caches
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+          navigator.serviceWorker.getRegistrations().then(registrations => {
+            for (const registration of registrations) {
+              registration.unregister();
+              console.log('[SW] Unregistered development service worker');
             }
           });
-        });
+          if ('caches' in window) {
+            caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
+          }
+        } else {
+          window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js')
+              .then(reg => console.log('[SW] Registered:', reg.scope))
+              .catch(err => console.warn('[SW] Registration failed:', err));
+
+            navigator.serviceWorker.addEventListener('message', (event) => {
+              if (event.data?.type === 'SYNC_COMPLETE') {
+                console.log('[SW] Synced screening:', event.data.screening_id);
+              }
+            });
+          });
+        }
       }
     </script>
   </body>

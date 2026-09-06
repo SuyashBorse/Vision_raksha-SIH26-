@@ -13,6 +13,10 @@ from dotenv import load_dotenv
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
+import torch
+
+# Prevent PyTorch from using 100% of the CPU and lagging local development machines
+torch.set_num_threads(2)
 
 load_dotenv()
 
