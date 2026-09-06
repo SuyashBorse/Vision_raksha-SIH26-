@@ -2,7 +2,7 @@
 // Strategy: Cache-first for assets, Network-first for API, Offline queue for images
 // Spec: TRD Section 7 (Offline-first PWA)
 
-const CACHE_NAME     = "retinai-v4";
+const CACHE_NAME     = "retinai-v4-theme-update";
 const OFFLINE_URL    = "/offline.html";
 
 // Assets to pre-cache on install

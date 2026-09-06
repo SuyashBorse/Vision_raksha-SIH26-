@@ -10,11 +10,11 @@ import {
 import { listPatients, getPatient, createPatient } from "../utils/api";
 
 const GRADE_BADGE = {
-  0: "bg-green-100 text-green-800",
-  1: "bg-yellow-100 text-yellow-800",
-  2: "bg-orange-100 text-orange-800",
-  3: "bg-red-100 text-red-800",
-  4: "bg-red-900 text-white",
+  0: "bg-emerald-50 text-emerald-700 border-emerald-200",
+  1: "bg-amber-50 text-amber-700 border-amber-200",
+  2: "bg-orange-50 text-orange-700 border-orange-200",
+  3: "bg-rose-50 text-rose-700 border-rose-200",
+  4: "bg-rose-900 text-white border-rose-800",
 };
 
 export default function PatientsPage() {
@@ -51,44 +51,42 @@ export default function PatientsPage() {
   };
 
   return (
-    <div className="flex h-full overflow-hidden">
+    <div className="flex h-[calc(100vh-64px)] overflow-hidden">
 
       {/* ── Left panel — list ──────────────────────────── */}
-      <div className={`flex flex-col border-r border-gray-200 bg-white
+      <div className={`flex flex-col border-r border-[#E1E9EC] bg-white
         ${selected ? "hidden md:flex w-80" : "flex flex-1"}`}>
 
         {/* Header */}
-        <div className="px-4 pt-5 pb-3 border-b border-gray-100">
+        <div className="px-4 pt-5 pb-3 border-b border-[#E1E9EC]">
           <div className="flex items-center justify-between mb-3">
-            <h1 className="text-xl font-bold text-gray-800">Patients</h1>
-            <button onClick={() => setShowAdd(true)}
-              className="flex items-center gap-1 bg-blue-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-blue-800 transition">
-              <UserPlus size={13} /> Add
+            <h1 className="text-xl font-bold text-[#1F2F42]">Patients</h1>
+            <button onClick={() => setShowAdd(true)} className="btn-primary text-xs py-2 px-4 gap-1.5">
+              <UserPlus size={14} /> Add Patient
             </button>
           </div>
           {/* Search */}
           <div className="relative">
-            <Search size={14} className="absolute left-3 top-2.5 text-gray-400" />
+            <Search size={14} className="absolute left-3.5 top-3.5 text-[#22AEB0]" />
             <input
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="Search name, phone, ABHA ID..."
-              className="w-full pl-8 pr-3 py-2 text-sm border border-gray-200 rounded-lg
-                         focus:outline-none focus:ring-2 focus:ring-blue-300"
+              className="input-themed pl-9"
             />
           </div>
-          <p className="text-xs text-gray-400 mt-2">{total} patient{total !== 1 ? "s" : ""}</p>
+          <p className="text-xs text-[#94A1AB] mt-2 font-medium">{total} patient{total !== 1 ? "s" : ""}</p>
         </div>
 
         {/* List */}
         <div className="flex-1 overflow-y-auto">
           {loading && (
-            <div className="flex justify-center p-6 text-gray-400">
+            <div className="flex justify-center p-6 text-[#22AEB0]">
               <Loader2 size={20} className="animate-spin" />
             </div>
           )}
           {!loading && patients.length === 0 && (
-            <div className="p-6 text-center text-gray-400 text-sm">
+            <div className="p-6 text-center text-[#94A1AB] text-sm font-medium">
               {search ? "No patients match your search" : "No patients yet — add one to begin"}
             </div>
           )}
@@ -105,15 +103,15 @@ export default function PatientsPage() {
 
       {/* ── Right panel — detail ───────────────────────── */}
       {(selected || detailLoading) && (
-        <div className="flex-1 overflow-y-auto bg-gray-50 p-6">
+        <div className="flex-1 overflow-y-auto bg-[#F7FAFB] p-6">
           <button
-            className="md:hidden flex items-center gap-1 text-sm text-blue-600 mb-4"
+            className="md:hidden flex items-center gap-1 text-sm text-[#22AEB0] font-semibold mb-4"
             onClick={() => setSelected(null)}>
             ← Back to list
           </button>
 
           {detailLoading && (
-            <div className="flex justify-center p-12 text-gray-400">
+            <div className="flex justify-center p-12 text-[#22AEB0]">
               <Loader2 size={28} className="animate-spin" />
             </div>
           )}
@@ -141,23 +139,23 @@ function PatientRow({ patient, active, onClick }) {
   return (
     <button
       onClick={onClick}
-      className={`w-full text-left px-4 py-3 border-b border-gray-100 hover:bg-blue-50/40 transition
-        ${active ? "bg-blue-50 border-l-2 border-l-blue-600" : ""}`}
+      className={`w-full text-left px-4 py-3.5 border-b border-[#E1E9EC]/50 hover:bg-[#F7FAFB] transition-all cursor-pointer
+        ${active ? "bg-[#E8F7F6] border-l-3 border-l-[#22AEB0]" : ""}`}
     >
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm font-semibold text-gray-800">{patient.name}</p>
-          <p className="text-xs text-gray-400 mt-0.5">
+          <p className="text-sm font-semibold text-[#1F2F42]">{patient.name}</p>
+          <p className="text-xs text-[#94A1AB] mt-0.5 font-medium">
             Age {patient.age} · {patient.village || "—"} · {patient.screening_count} screening{patient.screening_count !== 1 ? "s" : ""}
           </p>
         </div>
         <div className="flex items-center gap-2">
           {patient.last_grade != null && (
-            <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${gradeClass}`}>
+            <span className={`text-xs px-2.5 py-0.5 rounded-lg font-semibold border ${gradeClass}`}>
               G{patient.last_grade}
             </span>
           )}
-          <ChevronRight size={14} className="text-gray-300" />
+          <ChevronRight size={14} className="text-[#94A1AB]" />
         </div>
       </div>
     </button>
@@ -175,22 +173,22 @@ function PatientDetail({ patient }) {
   return (
     <div className="space-y-4 max-w-2xl">
       {/* Info card */}
-      <div className="bg-white rounded-xl border border-gray-200 p-5">
+      <div className="card-static p-6">
         <div className="flex items-start justify-between">
           <div>
-            <h2 className="text-xl font-bold text-gray-800">{patient.name}</h2>
-            <p className="text-sm text-gray-500 mt-0.5">
+            <h2 className="text-xl font-bold text-[#1F2F42]">{patient.name}</h2>
+            <p className="text-sm text-[#657685] mt-0.5 font-medium">
               Age {patient.age} · {patient.gender === "M" ? "Male" : patient.gender === "F" ? "Female" : "Other"}
               {patient.village ? ` · ${patient.village}` : ""}
             </p>
           </div>
-          <div className="text-right text-xs text-gray-400">
-            <p>{patient.abha_id ? `ABHA: ${patient.abha_id}` : "No ABHA ID"}</p>
+          <div className="text-right text-xs text-[#94A1AB] font-medium">
+            <p className="font-mono text-[#22AEB0] font-semibold">{patient.abha_id ? `ABHA: ${patient.abha_id}` : "No ABHA ID"}</p>
             <p>{patient.phone || ""}</p>
           </div>
         </div>
         {patient.diabetic_since && (
-          <p className="mt-2 text-xs text-orange-600 font-medium">
+          <p className="mt-2.5 text-xs text-[#22AEB0] font-semibold bg-[#E8F7F6] px-3.5 py-1 rounded-lg border border-[#22AEB0]/15 inline-block">
             Diabetic since {patient.diabetic_since} ({new Date().getFullYear() - patient.diabetic_since} yrs)
           </p>
         )}
@@ -198,9 +196,9 @@ function PatientDetail({ patient }) {
 
       {/* Grade trend mini-chart */}
       {patient.grade_trend?.length > 0 && (
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
+        <div className="card-static p-5">
           <div className="flex items-center justify-between mb-3">
-            <p className="text-sm font-semibold text-gray-700">Grade Trend</p>
+            <p className="text-xs font-bold text-[#1F2F42] uppercase tracking-wider">Grade Trend</p>
             {screenings.length >= 2 && (
               <button
                 onClick={() => {
@@ -208,7 +206,7 @@ function PatientDetail({ patient }) {
                   setFollowIdx(0); // newest
                   setComparing(true);
                 }}
-                className="text-xs bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-semibold px-2.5 py-1 rounded-md border border-indigo-200 transition"
+                className="btn-outline text-xs py-1.5 px-3.5"
               >
                 🔬 Compare Visits Side-by-Side
               </button>
@@ -218,22 +216,22 @@ function PatientDetail({ patient }) {
             {patient.grade_trend.map((g, i) => (
               <div key={i} className="flex-1 flex flex-col items-center gap-1">
                 <div
-                  className={`w-full rounded-t transition-all ${GRADE_BADGE[g]?.split(" ")[0] || "bg-gray-200"}`}
+                  className={`w-full rounded-t-lg transition-all ${GRADE_BADGE[g]?.split(" ")[0] || "bg-[#E1E9EC]"}`}
                   style={{ height: `${Math.max(8, (g + 1) * 12)}px` }}
                   title={`Grade ${g}`}
                 />
-                <span className="text-xs text-gray-400">{i + 1}</span>
+                <span className="text-xs text-[#94A1AB] font-mono">{i + 1}</span>
               </div>
             ))}
           </div>
-          <p className="text-xs text-gray-400 mt-1 text-center">Screening number →</p>
+          <p className="text-xs text-[#94A1AB] mt-2 text-center font-medium">Screening number →</p>
         </div>
       )}
 
       {/* Screenings history */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
-          <p className="text-sm font-semibold text-gray-700">
+      <div className="card-static overflow-hidden p-0">
+        <div className="px-5 py-3.5 border-b border-[#E1E9EC] bg-[#F7FAFB] flex items-center justify-between">
+          <p className="text-xs font-bold text-[#1F2F42] uppercase tracking-wider">
             Screening History ({screenings.length})
           </p>
           {screenings.length >= 2 && !comparing && (
@@ -243,34 +241,34 @@ function PatientDetail({ patient }) {
                 setFollowIdx(0);
                 setComparing(true);
               }}
-              className="text-xs text-blue-600 hover:underline font-medium"
+              className="text-xs text-[#22AEB0] hover:underline font-semibold"
             >
               Compare Visits
             </button>
           )}
         </div>
         {screenings.length === 0 && (
-          <p className="px-4 py-6 text-center text-gray-400 text-sm">No screenings yet</p>
+          <p className="px-4 py-6 text-center text-[#94A1AB] text-sm font-medium">No screenings yet</p>
         )}
         {screenings.map((s) => (
           <div key={s.screening_id}
-            className="px-4 py-3 border-b border-gray-50 flex items-center justify-between hover:bg-gray-50">
+            className="px-5 py-3.5 border-b border-[#E1E9EC]/50 flex items-center justify-between hover:bg-[#F7FAFB] transition">
             <div className="flex items-center gap-3">
               {s.grade >= 2
                 ? <AlertTriangle size={16} className="text-orange-500" />
-                : <CheckCircle size={16} className="text-green-500" />}
+                : <CheckCircle size={16} className="text-emerald-500" />}
               <div>
-                <p className="text-sm font-medium text-gray-700">
+                <p className="text-sm font-semibold text-[#263746]">
                   Grade {s.grade} — {s.grade_label}
                 </p>
-                <p className="text-xs text-gray-400">{s.date} · {s.confidence}% confidence</p>
+                <p className="text-xs text-[#94A1AB] font-medium">{s.date} · {s.confidence}% confidence</p>
               </div>
             </div>
             <div className="flex items-center gap-2 text-xs">
               {s.validated
-                ? <span className="text-green-600 font-medium">✓ Validated</span>
-                : <span className="text-gray-400">Pending</span>}
-              <span className={`px-2 py-0.5 rounded-full font-medium ${GRADE_BADGE[s.grade]}`}>
+                ? <span className="text-[#22AEB0] font-semibold">✓ Validated</span>
+                : <span className="text-[#94A1AB] font-medium">Pending</span>}
+              <span className={`px-2.5 py-0.5 rounded-lg font-semibold border ${GRADE_BADGE[s.grade]}`}>
                 G{s.grade}
               </span>
             </div>
@@ -280,14 +278,14 @@ function PatientDetail({ patient }) {
 
       {/* Longitudinal Comparison Modal */}
       {comparing && screenings.length >= 2 && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-2xl w-full p-6 space-y-4 shadow-xl">
-            <div className="flex items-center justify-between border-b pb-3">
+        <div className="fixed inset-0 bg-[#1F2F42]/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-2xl w-full p-6 space-y-4 shadow-2xl border border-[#E1E9EC]">
+            <div className="flex items-center justify-between border-b border-[#E1E9EC] pb-3.5">
               <div>
-                <h3 className="text-lg font-bold text-gray-800">Longitudinal Screening Comparison</h3>
-                <p className="text-xs text-gray-500">{patient.name} · Tracking DR Progression Over Time</p>
+                <h3 className="text-lg font-bold text-[#1F2F42]">Longitudinal Screening Comparison</h3>
+                <p className="text-xs text-[#657685] font-medium">{patient.name} · Tracking DR Progression Over Time</p>
               </div>
-              <button onClick={() => setComparing(false)} className="text-gray-400 hover:text-gray-600">
+              <button onClick={() => setComparing(false)} className="text-[#94A1AB] hover:text-[#657685] cursor-pointer">
                 <X size={20} />
               </button>
             </div>
@@ -295,11 +293,11 @@ function PatientDetail({ patient }) {
             {/* Visit Selectors */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="text-xs font-semibold text-gray-600 block mb-1">Baseline Visit (Earlier)</label>
+                <label className="text-xs font-semibold text-[#657685] block mb-1">Baseline Visit (Earlier)</label>
                 <select
                   value={baseIdx}
                   onChange={(e) => setBaseIdx(Number(e.target.value))}
-                  className="w-full text-xs border border-gray-200 rounded-lg p-2 bg-gray-50"
+                  className="input-themed text-xs py-2.5"
                 >
                   {screenings.map((s, idx) => (
                     <option key={s.screening_id} value={idx}>
@@ -309,11 +307,11 @@ function PatientDetail({ patient }) {
                 </select>
               </div>
               <div>
-                <label className="text-xs font-semibold text-gray-600 block mb-1">Follow-up Visit (Later)</label>
+                <label className="text-xs font-semibold text-[#657685] block mb-1">Follow-up Visit (Later)</label>
                 <select
                   value={followIdx}
                   onChange={(e) => setFollowIdx(Number(e.target.value))}
-                  className="w-full text-xs border border-gray-200 rounded-lg p-2 bg-gray-50"
+                  className="input-themed text-xs py-2.5"
                 >
                   {screenings.map((s, idx) => (
                     <option key={s.screening_id} value={idx}>
@@ -326,22 +324,22 @@ function PatientDetail({ patient }) {
 
             {/* Comparison Cards */}
             <div className="grid grid-cols-2 gap-4 pt-2">
-              <div className="border rounded-xl p-4 bg-slate-50 space-y-2">
-                <p className="text-xs font-bold text-gray-500 uppercase">Baseline</p>
-                <p className="text-lg font-bold text-gray-800">
+              <div className="border border-[#E1E9EC] rounded-2xl p-4 bg-[#F7FAFB] space-y-2">
+                <p className="text-xs font-bold text-[#94A1AB] uppercase tracking-wider">Baseline</p>
+                <p className="text-lg font-bold text-[#1F2F42]">
                   Grade {screenings[baseIdx]?.grade}
                 </p>
-                <p className="text-xs text-gray-600">{screenings[baseIdx]?.grade_label}</p>
-                <p className="text-xs text-gray-400">{screenings[baseIdx]?.date} · {screenings[baseIdx]?.confidence}% Conf</p>
+                <p className="text-xs text-[#657685] font-medium">{screenings[baseIdx]?.grade_label}</p>
+                <p className="text-xs text-[#94A1AB] font-mono">{screenings[baseIdx]?.date} · {screenings[baseIdx]?.confidence}% Conf</p>
               </div>
 
-              <div className="border rounded-xl p-4 bg-slate-50 space-y-2">
-                <p className="text-xs font-bold text-gray-500 uppercase">Follow-up</p>
-                <p className="text-lg font-bold text-gray-800">
+              <div className="border border-[#E1E9EC] rounded-2xl p-4 bg-[#F7FAFB] space-y-2">
+                <p className="text-xs font-bold text-[#94A1AB] uppercase tracking-wider">Follow-up</p>
+                <p className="text-lg font-bold text-[#1F2F42]">
                   Grade {screenings[followIdx]?.grade}
                 </p>
-                <p className="text-xs text-gray-600">{screenings[followIdx]?.grade_label}</p>
-                <p className="text-xs text-gray-400">{screenings[followIdx]?.date} · {screenings[followIdx]?.confidence}% Conf</p>
+                <p className="text-xs text-[#657685] font-medium">{screenings[followIdx]?.grade_label}</p>
+                <p className="text-xs text-[#94A1AB] font-mono">{screenings[followIdx]?.date} · {screenings[followIdx]?.confidence}% Conf</p>
               </div>
             </div>
 
@@ -349,12 +347,12 @@ function PatientDetail({ patient }) {
             {(() => {
               const delta = (screenings[followIdx]?.grade ?? 0) - (screenings[baseIdx]?.grade ?? 0);
               return (
-                <div className={`p-4 rounded-xl border text-sm font-semibold flex items-center justify-between ${
+                <div className={`p-4 rounded-2xl border text-sm font-semibold flex items-center justify-between ${
                   delta > 0
-                    ? "bg-red-50 border-red-200 text-red-800"
+                    ? "bg-rose-50 border-rose-200 text-rose-800"
                     : delta < 0
-                    ? "bg-green-50 border-green-200 text-green-800"
-                    : "bg-blue-50 border-blue-200 text-blue-800"
+                    ? "bg-emerald-50 border-emerald-200 text-emerald-800"
+                    : "bg-[#F7FAFB] border-[#E1E9EC] text-[#1F2F42]"
                 }`}>
                   <span>
                     {delta > 0
@@ -363,7 +361,7 @@ function PatientDetail({ patient }) {
                       ? `✓ Improvement: Disease severity regressed by ${Math.abs(delta)} grade level(s)`
                       : "✓ Stable: No change in DR severity between visits"}
                   </span>
-                  <span className="text-xs font-mono font-normal">
+                  <span className="text-xs font-mono font-bold">
                     Δ Grade = {delta > 0 ? `+${delta}` : delta}
                   </span>
                 </div>
@@ -373,7 +371,7 @@ function PatientDetail({ patient }) {
             <div className="flex justify-end pt-2">
               <button
                 onClick={() => setComparing(false)}
-                className="bg-gray-800 text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-gray-900"
+                className="btn-primary text-xs py-2.5 px-6"
               >
                 Close Comparison
               </button>
@@ -411,20 +409,19 @@ function AddPatientModal({ onClose, onAdded }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <h2 className="font-bold text-gray-800">Register New Patient</h2>
-          <button onClick={onClose}><X size={18} className="text-gray-400 hover:text-gray-700" /></button>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#1F2F42]/60 backdrop-blur-sm p-4">
+      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md border border-[#E1E9EC]">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#E1E9EC]">
+          <h2 className="font-bold text-[#1F2F42]">Register New Patient</h2>
+          <button onClick={onClose}><X size={18} className="text-[#94A1AB] hover:text-[#657685] cursor-pointer" /></button>
         </div>
-        <form onSubmit={submit} className="px-6 py-4 space-y-3">
+        <form onSubmit={submit} className="px-6 py-4 space-y-3.5">
           <Field label="Full Name *" name="name" required placeholder="Ramesh Kumar" />
           <div className="grid grid-cols-2 gap-3">
             <Field label="Age *" name="age" type="number" required min="1" max="120" placeholder="52" />
             <div>
-              <label className="text-xs font-medium text-gray-600">Gender</label>
-              <select name="gender"
-                className="mt-1 w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300">
+              <label className="text-xs font-semibold text-[#657685]">Gender</label>
+              <select name="gender" className="input-themed mt-1 text-sm py-2.5 px-3">
                 <option value="M">Male</option>
                 <option value="F">Female</option>
                 <option value="O">Other</option>
@@ -436,15 +433,13 @@ function AddPatientModal({ onClose, onAdded }) {
           <Field label="Village / Area" name="village" placeholder="Pune Rural" />
           <Field label="Diabetic Since (year)" name="diabetic_since" type="number" min="1950" max={new Date().getFullYear()} placeholder="2018" />
 
-          {error && <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{error}</p>}
+          {error && <p className="text-xs text-rose-700 bg-rose-50 border border-rose-200 rounded-xl px-3.5 py-2 font-medium">{error}</p>}
 
-          <div className="flex gap-2 pt-1">
-            <button type="button" onClick={onClose}
-              className="flex-1 border border-gray-200 text-gray-600 py-2.5 rounded-lg text-sm font-semibold hover:bg-gray-50 transition">
+          <div className="flex gap-2 pt-2">
+            <button type="button" onClick={onClose} className="btn-outline flex-1 text-xs py-2.5">
               Cancel
             </button>
-            <button type="submit" disabled={loading}
-              className="flex-1 bg-blue-700 text-white py-2.5 rounded-lg text-sm font-semibold hover:bg-blue-800 disabled:opacity-50 transition flex items-center justify-center gap-2">
+            <button type="submit" disabled={loading} className="btn-primary flex-1 text-xs py-2.5 gap-2">
               {loading ? <Loader2 size={14} className="animate-spin" /> : null}
               Register
             </button>
@@ -458,10 +453,8 @@ function AddPatientModal({ onClose, onAdded }) {
 function Field({ label, name, type = "text", required, ...rest }) {
   return (
     <div>
-      <label className="text-xs font-medium text-gray-600">{label}</label>
-      <input name={name} type={type} required={required} {...rest}
-        className="mt-1 w-full border border-gray-200 rounded-lg px-3 py-2 text-sm
-                   focus:outline-none focus:ring-2 focus:ring-blue-300" />
+      <label className="text-xs font-semibold text-[#657685]">{label}</label>
+      <input name={name} type={type} required={required} {...rest} className="input-themed mt-1 text-sm py-2.5" />
     </div>
   );
 }

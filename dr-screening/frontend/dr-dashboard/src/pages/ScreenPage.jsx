@@ -128,25 +128,25 @@ export default function ScreenPage() {
   };
 
   return (
-    <div className="p-6 max-w-3xl mx-auto">
+    <div className="max-w-3xl mx-auto p-6 space-y-6">
       {/* ── Step Indicator ─────────────────────────────────── */}
-      <div className="flex items-center gap-2 mb-6">
+      <div className="flex items-center gap-2 mb-6 card-static p-4">
         {STEPS.map((label, i) => (
           <div key={label} className="flex items-center gap-2 flex-1">
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition
-              ${i < step  ? "bg-emerald-600 text-white"
-              : i === step ? "bg-blue-700 text-white ring-4 ring-blue-100"
-              : "bg-gray-100 text-gray-400"}`}>
+            <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-xs font-bold transition-all
+              ${i < step  ? "bg-emerald-500 text-white"
+              : i === step ? "bg-[#22AEB0] text-white ring-4 ring-[#22AEB0]/15 shadow-btn"
+              : "bg-[#F7FAFB] text-[#94A1AB] border border-[#E1E9EC]"}`}>
               {i < step ? "✓" : i + 1}
             </div>
-            <span className={`text-xs md:text-sm font-medium ${i === step ? "text-blue-800 font-semibold" : "text-gray-400"}`}>
+            <span className={`text-xs md:text-sm font-semibold ${i === step ? "text-[#1F2F42]" : "text-[#94A1AB]"}`}>
               {label}
             </span>
-            {i < STEPS.length - 1 && <div className="flex-1 h-0.5 bg-gray-200" />}
+            {i < STEPS.length - 1 && <div className="flex-1 h-[2px] bg-[#E1E9EC]" />}
           </div>
         ))}
         {step > 0 && (
-          <button onClick={reset} className="text-xs text-gray-500 hover:text-red-600 font-medium ml-2 transition">
+          <button onClick={reset} className="text-xs text-[#94A1AB] hover:text-rose-600 font-semibold ml-2 transition bg-[#F7FAFB] hover:bg-rose-50 px-3 py-1.5 rounded-xl border border-[#E1E9EC] cursor-pointer">
             ↺ Reset
           </button>
         )}
@@ -154,13 +154,13 @@ export default function ScreenPage() {
 
       {/* ── STEP 0: PATIENT INTAKE & CLINICAL VITALS ──────── */}
       {step === 0 && (
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 space-y-5">
-          <div className="border-b border-gray-100 pb-4">
-            <div className="flex items-center gap-2 text-blue-700">
+        <div className="card-static p-6 space-y-5">
+          <div className="border-b border-[#E1E9EC] pb-4">
+            <div className="flex items-center gap-2 text-[#22AEB0]">
               <UserPlus size={22} />
-              <h2 className="text-lg font-bold text-gray-900">Patient Registration & Clinical Intake</h2>
+              <h2 className="text-lg font-bold text-[#1F2F42]">Patient Registration & Clinical Intake</h2>
             </div>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-[#657685] font-medium mt-1">
               Compliant with Ayushman Bharat Digital Mission (ABDM). Collect patient demographics and metabolic biomarkers for multi-modal DR risk scoring.
             </p>
           </div>
@@ -169,26 +169,26 @@ export default function ScreenPage() {
             {/* Primary Details */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-gray-700 mb-1">Full Patient Name *</label>
+                <label className="block text-xs font-semibold text-[#657685] mb-1.5">Full Patient Name *</label>
                 <input
                   name="name"
                   required
                   placeholder="e.g. Ramesh Chandra Verma"
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  className="input-themed"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-gray-700 mb-1 flex items-center justify-between">
+                <label className="block text-xs font-semibold text-[#657685] mb-1.5 flex items-center justify-between">
                   <span>ABHA / Aadhaar ID</span>
-                  <span className="text-[10px] text-emerald-600 font-mono flex items-center gap-0.5">
+                  <span className="text-[10px] text-[#22AEB0] font-mono flex items-center gap-0.5">
                     <ShieldCheck size={11} /> ABDM Linked
                   </span>
                 </label>
                 <input
                   name="abha_id"
                   placeholder="e.g. 91-4521-8902-1134"
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm font-mono focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  className="input-themed font-mono"
                 />
               </div>
             </div>
@@ -196,7 +196,7 @@ export default function ScreenPage() {
             {/* Demographics */}
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               <div>
-                <label className="block text-xs font-semibold text-gray-700 mb-1">Age (Years) *</label>
+                <label className="block text-xs font-semibold text-[#657685] mb-1.5">Age (Years) *</label>
                 <input
                   name="age"
                   type="number"
@@ -204,15 +204,15 @@ export default function ScreenPage() {
                   min="1"
                   max="120"
                   placeholder="58"
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  className="input-themed"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-gray-700 mb-1">Gender *</label>
+                <label className="block text-xs font-semibold text-[#657685] mb-1.5">Gender *</label>
                 <select
                   name="gender"
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  className="input-themed"
                 >
                   <option value="M">Male</option>
                   <option value="F">Female</option>
@@ -221,25 +221,25 @@ export default function ScreenPage() {
               </div>
 
               <div className="col-span-2 md:col-span-1">
-                <label className="block text-xs font-semibold text-gray-700 mb-1">Phone (SMS Triage)</label>
+                <label className="block text-xs font-semibold text-[#657685] mb-1.5">Phone (SMS Triage)</label>
                 <input
                   name="phone"
                   placeholder="+91 98765 43210"
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  className="input-themed"
                 />
               </div>
             </div>
 
             {/* Clinical Biomarkers Section */}
-            <div className="bg-amber-50/70 border border-amber-200 rounded-xl p-4 space-y-3">
-              <div className="flex items-center gap-2 text-amber-900 font-semibold text-xs">
-                <HeartPulse size={16} className="text-amber-700" />
+            <div className="bg-[#E8F7F6] border border-[#22AEB0]/15 rounded-2xl p-4 space-y-3">
+              <div className="flex items-center gap-2 text-[#1F2F42] font-bold text-xs">
+                <HeartPulse size={16} className="text-[#22AEB0]" />
                 <span>Multi-Modal Diabetic Risk Biomarkers (Optional but Recommended)</span>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-[11px] font-medium text-amber-900 mb-1">
+                  <label className="block text-[11px] font-semibold text-[#657685] mb-1">
                     Diabetes Duration (Years)
                   </label>
                   <input
@@ -248,13 +248,13 @@ export default function ScreenPage() {
                     min="0"
                     max="60"
                     placeholder="e.g. 10"
-                    className="w-full bg-white border border-amber-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                    className="input-themed py-2.5 bg-white"
                   />
-                  <span className="text-[10px] text-amber-700 mt-0.5 block">&gt;10 yrs increases risk 3x</span>
+                  <span className="text-[10px] text-[#94A1AB] mt-0.5 block">&gt;10 yrs increases risk 3x</span>
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-medium text-amber-900 mb-1">
+                  <label className="block text-[11px] font-semibold text-[#657685] mb-1">
                     HbA1c Level (%)
                   </label>
                   <input
@@ -264,13 +264,13 @@ export default function ScreenPage() {
                     min="4"
                     max="20"
                     placeholder="e.g. 8.5"
-                    className="w-full bg-white border border-amber-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                    className="input-themed py-2.5 bg-white"
                   />
-                  <span className="text-[10px] text-amber-700 mt-0.5 block">&ge;8.0% elevates microvascular risk</span>
+                  <span className="text-[10px] text-[#94A1AB] mt-0.5 block">&ge;8.0% elevates microvascular risk</span>
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-medium text-amber-900 mb-1">
+                  <label className="block text-[11px] font-semibold text-[#657685] mb-1">
                     Systolic BP (mmHg)
                   </label>
                   <input
@@ -279,25 +279,25 @@ export default function ScreenPage() {
                     min="60"
                     max="260"
                     placeholder="e.g. 135"
-                    className="w-full bg-white border border-amber-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                    className="input-themed py-2.5 bg-white"
                   />
-                  <span className="text-[10px] text-amber-700 mt-0.5 block">&ge;140 aggravates edema</span>
+                  <span className="text-[10px] text-[#94A1AB] mt-0.5 block">&ge;140 aggravates edema</span>
                 </div>
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">Village / PHC Center</label>
+              <label className="block text-xs font-semibold text-[#657685] mb-1.5">Village / PHC Center</label>
               <input
                 name="village"
                 placeholder="e.g. PHC Shivpuri, Vidisha District"
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                className="input-themed"
               />
             </div>
 
             <button
               type="submit"
-              className="w-full bg-blue-700 text-white py-3 rounded-lg text-sm font-bold hover:bg-blue-800 transition flex items-center justify-center gap-2 shadow-sm"
+              className="btn-primary w-full py-3.5 text-sm gap-2"
             >
               <span>Save & Proceed to Fundus Camera Import</span>
               <ArrowRight size={16} />
@@ -309,7 +309,7 @@ export default function ScreenPage() {
               setVitals({ name: "Anonymous Patient", age: 55, abha_id: "ANON-CLINICAL" });
               setStep(1);
             }}
-            className="w-full text-center text-xs text-gray-400 hover:text-gray-600 transition"
+            className="w-full text-center text-xs text-[#94A1AB] hover:text-[#22AEB0] transition font-semibold cursor-pointer"
           >
             Skip registration (Quick anonymous screening mode)
           </button>
@@ -318,22 +318,22 @@ export default function ScreenPage() {
 
       {/* ── STEP 1: FUNDUS IMAGE IMPORT ───────────────────── */}
       {step === 1 && (
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 space-y-4">
+        <div className="card-static p-6 space-y-5">
           {/* Patient Header Badge */}
-          <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 flex flex-wrap items-center justify-between gap-2 text-xs">
+          <div className="bg-[#F7FAFB] border border-[#E1E9EC] rounded-xl px-4 py-3 flex flex-wrap items-center justify-between gap-2 text-xs">
             <div>
-              <span className="text-gray-500">Patient: </span>
-              <strong className="text-gray-900 font-semibold">{vitals.name || "Anonymous"}</strong>
-              {vitals.age && <span className="text-gray-600"> ({vitals.age}y / {vitals.gender})</span>}
+              <span className="text-[#94A1AB] font-medium">Patient: </span>
+              <strong className="text-[#1F2F42] font-semibold">{vitals.name || "Anonymous"}</strong>
+              {vitals.age && <span className="text-[#657685]"> ({vitals.age}y / {vitals.gender})</span>}
             </div>
             {vitals.abha_id && (
-              <div className="font-mono bg-blue-100 text-blue-800 px-2 py-0.5 rounded text-[11px]">
+              <div className="font-mono bg-white text-[#22AEB0] px-3 py-1 rounded-lg border border-[#E1E9EC] font-semibold text-[11px]">
                 ABHA: {vitals.abha_id}
               </div>
             )}
             <button
               onClick={() => setStep(0)}
-              className="text-blue-600 hover:underline text-[11px]"
+              className="text-[#22AEB0] hover:underline font-semibold text-[11px] cursor-pointer"
             >
               Edit Vitals
             </button>
@@ -342,14 +342,14 @@ export default function ScreenPage() {
           <ImageCapture onImageReady={setImageFile} disabled={loading} />
 
           {error && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-700">
+            <div className="bg-rose-50 border border-rose-200 rounded-xl p-4 text-sm text-rose-700 font-medium">
               {error}
             </div>
           )}
 
           {queued && (
-            <div className="bg-orange-50 border border-orange-200 rounded-lg p-3 text-sm text-orange-800 flex items-center gap-2">
-              <WifiOff size={16} className="text-orange-600 flex-shrink-0" />
+            <div className="bg-[#E8F7F6] border border-[#22AEB0]/20 rounded-xl p-4 text-sm text-[#1F2F42] flex items-center gap-2 font-medium">
+              <WifiOff size={16} className="text-[#22AEB0] flex-shrink-0" />
               <span>
                 <strong>Saved to Offline Queue.</strong> Image will be analysed and synced when connectivity is restored.
               </span>
@@ -357,8 +357,8 @@ export default function ScreenPage() {
           )}
 
           {pendingCount > 0 && !queued && (
-            <div className="flex items-center gap-2 text-xs text-orange-600 bg-orange-50/50 p-2 rounded">
-              <Clock size={14} />
+            <div className="flex items-center gap-2 text-xs text-[#657685] bg-[#F7FAFB] p-3 rounded-xl border border-[#E1E9EC] font-medium">
+              <Clock size={14} className="text-[#22AEB0]" />
               <span>{pendingCount} screening(s) queued for offline sync.</span>
             </div>
           )}
@@ -366,9 +366,7 @@ export default function ScreenPage() {
           <button
             onClick={handleAnalyse}
             disabled={!imageFile || loading}
-            className="w-full bg-blue-700 text-white py-3.5 rounded-lg text-sm font-bold
-                       hover:bg-blue-800 disabled:opacity-40 disabled:cursor-not-allowed transition
-                       flex items-center justify-center gap-2 shadow-md"
+            className="btn-primary w-full py-3.5 text-sm gap-2"
           >
             {loading ? (
               <>
@@ -388,16 +386,16 @@ export default function ScreenPage() {
       {/* ── STEP 2: RESULTS & DOCTOR TRIAGE ───────────────── */}
       {step === 2 && (
         <div className="space-y-4">
-          <div className="flex items-center justify-between bg-white rounded-xl border border-gray-200 p-4">
+          <div className="flex items-center justify-between card-static p-4">
             <div>
-              <h2 className="text-base font-bold text-gray-900">Screening Complete</h2>
-              <p className="text-xs text-gray-500">
-                Patient: <span className="font-semibold text-gray-800">{vitals.name}</span> | ABHA: <span className="font-mono text-gray-700">{vitals.abha_id}</span>
+              <h2 className="text-base font-bold text-[#1F2F42]">Screening Complete</h2>
+              <p className="text-xs text-[#657685] font-medium">
+                Patient: <span className="font-semibold text-[#263746]">{vitals.name}</span> | ABHA: <span className="font-mono text-[#263746]">{vitals.abha_id}</span>
               </p>
             </div>
             <button
               onClick={reset}
-              className="bg-blue-50 text-blue-700 hover:bg-blue-100 px-3 py-1.5 rounded-lg text-xs font-semibold transition"
+              className="btn-primary text-xs py-2 px-4"
             >
               + Screen Next Patient
             </button>

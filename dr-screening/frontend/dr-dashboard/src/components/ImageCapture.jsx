@@ -56,12 +56,12 @@ export default function ImageCapture({ onImageReady, disabled }) {
   return (
     <div className="space-y-4">
       {/* ── Guidance Banner ────────────────────────────────── */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-xs text-blue-800 flex items-start gap-2.5">
-        <Eye size={18} className="text-blue-600 flex-shrink-0 mt-0.5" />
+      <div className="bg-[#E8F7F6] border border-[#22AEB0]/15 rounded-xl p-4 text-xs text-[#1F2F42] flex items-start gap-3">
+        <Eye size={18} className="text-[#22AEB0] flex-shrink-0 mt-0.5" />
         <div>
-          <p className="font-semibold text-blue-900">Fundus Camera Input Required</p>
-          <p className="text-blue-700 mt-0.5">
-            RetinAI evaluates <strong>interior retinal fundus photographs</strong> captured via handheld / desktop non-mydriatic fundus cameras (e.g., Remidio, Forus 3nethra, Volk VistaView) or smartphone ophthalmoscope attachments.
+          <p className="font-bold text-[#1F2F42]">Fundus Camera Input Required</p>
+          <p className="text-[#657685] mt-0.5 leading-relaxed font-medium">
+            VisionRaksha evaluates <strong className="text-[#263746]">interior retinal fundus photographs</strong> captured via handheld / desktop non-mydriatic fundus cameras (e.g., Remidio, Forus 3nethra, Volk VistaView) or smartphone ophthalmoscope attachments.
           </p>
         </div>
       </div>
@@ -69,26 +69,26 @@ export default function ImageCapture({ onImageReady, disabled }) {
       {/* ── Preview Mode ───────────────────────────────────── */}
       {preview ? (
         <div className="space-y-3">
-          <div className="relative rounded-xl overflow-hidden border-2 border-blue-400 bg-gray-950 p-2 text-center">
+          <div className="relative rounded-2xl overflow-hidden border-2 border-[#22AEB0] bg-[#0a0a0a] p-2.5 text-center shadow-card-hover">
             <img
               src={preview}
               alt="Selected retinal fundus"
-              className="max-h-72 mx-auto object-contain rounded-lg shadow-inner"
+              className="max-h-72 mx-auto object-contain rounded-xl shadow-inner"
             />
             <button
               onClick={reset}
-              className="absolute top-4 right-4 bg-white/90 hover:bg-red-50 hover:text-red-600 text-gray-700 rounded-full p-2 shadow-md transition"
+              className="absolute top-4 right-4 bg-white/90 hover:bg-rose-50 hover:text-rose-600 text-[#657685] rounded-xl p-2 shadow-md transition cursor-pointer"
               title="Remove image"
             >
               <X size={18} />
             </button>
-            <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center bg-black/75 backdrop-blur-sm text-white px-3 py-1.5 rounded-md text-xs">
-              <span className="truncate max-w-[200px] font-mono">{fileName}</span>
-              <span className="text-blue-300 font-semibold">{fileSize}</span>
+            <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center bg-[#1F2F42]/90 backdrop-blur-md text-white px-4 py-2.5 rounded-xl text-xs border border-[#22AEB0]/20">
+              <span className="truncate max-w-[200px] font-mono text-[#76D6D2] font-semibold">{fileName}</span>
+              <span className="text-[#22AEB0] font-bold">{fileSize}</span>
             </div>
           </div>
-          <div className="flex items-center justify-center gap-1.5 text-xs text-emerald-600 font-medium">
-            <CheckCircle2 size={15} />
+          <div className="flex items-center justify-center gap-1.5 text-xs text-[#22AEB0] font-bold bg-[#E8F7F6] py-2.5 rounded-xl border border-[#22AEB0]/15">
+            <CheckCircle2 size={16} />
             <span>Fundus photo loaded. Review patient vitals and click <strong>Analyse Image</strong> below.</span>
           </div>
         </div>
@@ -101,22 +101,22 @@ export default function ImageCapture({ onImageReady, disabled }) {
             onDrop={onDrop}
             onClick={() => fileInputRef.current.click()}
             className={`
-              border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition
+              border-2 border-dashed rounded-2xl p-9 text-center cursor-pointer transition-all duration-200
               ${dragOver
-                ? "border-blue-600 bg-blue-50/80 scale-[0.99]"
-                : "border-gray-300 hover:border-blue-400 hover:bg-blue-50/30"}
+                ? "border-[#22AEB0] bg-[#E8F7F6] scale-[0.99]"
+                : "border-[#E1E9EC] hover:border-[#22AEB0] hover:bg-[#F7FAFB] bg-white"}
             `}
           >
-            <div className="w-14 h-14 mx-auto mb-3 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
-              <Upload size={26} />
+            <div className="w-16 h-16 mx-auto mb-3.5 rounded-2xl bg-[#E8F7F6] border border-[#22AEB0]/15 flex items-center justify-center text-[#22AEB0]">
+              <Upload size={28} strokeWidth={1.5} />
             </div>
-            <p className="font-semibold text-gray-800 text-base">
+            <p className="font-bold text-[#1F2F42] text-base">
               Import Retinal Fundus Photograph
             </p>
-            <p className="text-xs text-gray-500 mt-1.5 max-w-sm mx-auto">
+            <p className="text-xs text-[#657685] mt-1.5 max-w-sm mx-auto leading-relaxed font-medium">
               Drag & drop fundus file here, or click to browse from Fundus Camera SD Card, USB storage, or PACS.
             </p>
-            <span className="inline-block mt-3 text-[11px] font-mono bg-gray-100 text-gray-600 px-2.5 py-1 rounded">
+            <span className="inline-block mt-3 text-[11px] font-mono bg-[#F7FAFB] text-[#657685] font-semibold px-3.5 py-1 rounded-lg border border-[#E1E9EC]">
               Formats: JPEG · PNG · WEBP · TIFF (Max 25MB)
             </span>
             <input
@@ -131,8 +131,8 @@ export default function ImageCapture({ onImageReady, disabled }) {
       )}
 
       {error && (
-        <div className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-3.5 py-2.5 flex items-start gap-2">
-          <FileText size={16} className="mt-0.5 flex-shrink-0 text-red-500" />
+        <div className="text-sm text-rose-700 bg-rose-50 border border-rose-200 rounded-xl px-3.5 py-2.5 flex items-start gap-2 font-medium">
+          <FileText size={16} className="mt-0.5 flex-shrink-0 text-rose-500" />
           <span>{error}</span>
         </div>
       )}
