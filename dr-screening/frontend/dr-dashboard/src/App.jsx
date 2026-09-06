@@ -36,7 +36,6 @@ function VRLogo({ size = 32 }) {
 }
 
 const NAV_AUTH = [
-  { to: "/",         icon: HomeIcon,        label: "Home" },
   { to: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
   { to: "/screen",   icon: Eye,             label: "Screen" },
   { to: "/patients", icon: Users,           label: "Patients" },
@@ -82,7 +81,7 @@ function AuthenticatedApp() {
           <div className="flex items-center justify-between h-16">
 
             {/* Left: Logo */}
-            <div className="flex items-center gap-3 flex-shrink-0">
+            <NavLink to="/dashboard" className="flex items-center gap-3 flex-shrink-0 cursor-pointer">
               <VRLogo size={36} />
               <div className="hidden sm:block">
                 <h1 className="text-white font-bold text-lg leading-tight tracking-wide">
@@ -92,7 +91,7 @@ function AuthenticatedApp() {
                   AI for Healthier Tomorrows
                 </p>
               </div>
-            </div>
+            </NavLink>
 
             {/* Center: Nav Links (desktop) */}
             <div className="hidden md:flex items-center gap-1">
@@ -100,7 +99,7 @@ function AuthenticatedApp() {
                 <NavLink
                   key={to}
                   to={to}
-                  end={to === "/"}
+                  end={to === "/dashboard"}
                   className={({ isActive }) =>
                     `flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200
                      ${isActive
@@ -180,7 +179,7 @@ function AuthenticatedApp() {
               <NavLink
                 key={to}
                 to={to}
-                end={to === "/"}
+                end={to === "/dashboard"}
                 className={({ isActive }) =>
                   `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all
                    ${isActive
@@ -204,10 +203,11 @@ function AuthenticatedApp() {
 
       <main className="flex-1">
         <Routes>
-          <Route path="/"          element={<HomePage />} />
+          <Route path="/"          element={<Navigate to="/dashboard" replace />} />
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/screen"    element={<ScreenPage />} />
           <Route path="/patients"  element={<PatientsPage />} />
+          <Route path="*"          element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </main>
     </div>
