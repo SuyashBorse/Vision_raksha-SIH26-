@@ -42,13 +42,25 @@ async def lifespan(app: FastAPI):
     init_db()
     logger.info("Database tables ready")
 
-    # Init AI pipeline (loads model if .pth exists, else demo mode)
+    # Init AI pipeline (loads model if .pth exists, or downloads if MODEL_DOWNLOAD_URL provided)
     from ai.pipeline import init_pipeline
     model_path = os.getenv("MODEL_PATH", "models/best_dr_model.pth")
     if not os.path.exists(model_path):
         alt_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "models", "best_dr_model.pth")
         if os.path.exists(alt_path):
             model_path = alt_path
+
+    # Optional cloud auto-download (e.g. Render / Cloud Run)
+    download_url = os.getenv("MODEL_DOWNLOAD_URL") or os.getenv("MODEL_URL")
+    if not os.path.exists(model_path) and download_url:
+        try:
+            logger.info(f"Downloading model weights from: {download_url} ...")
+            os.makedirs(os.path.dirname(model_path) or "models", exist_ok=True)
+            import urllib.request
+            urllib.request.urlretrieve(download_url, model_path)
+            logger.info(f"Model weights downloaded successfully to {model_path}")
+        except Exception as e:
+            logger.warning(f"Failed to download model weights from {download_url}: {e}")
 
     pipeline   = init_pipeline(model_path=model_path, device="cpu")
     logger.info(
@@ -76,15 +88,25 @@ app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # ── CORS ─────────────────────────────────────────────────────
-CORS_ORIGINS = os.getenv("CORS_ORIGINS", "http://localhost:3000,http://localhost:5173,http://localhost:8000").split(",")
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins     = CORS_ORIGINS,
-    allow_credentials = True,
-    allow_methods     = ["*"],
-    allow_headers     = ["*"],
-)
+cors_env = os.getenv("CORS_ORIGINS", "http://localhost:3000,http://localhost:5173,http://localhost:8000")
+if cors_env.strip() == "*":
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origin_regex = r".*",
+        allow_credentials  = True,
+        allow_methods      = ["*"],
+        allow_headers      = ["*"],
+    )
+else:
+    CORS_ORIGINS = [orig.strip() for orig in cors_env.split(",") if orig.strip()]
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins      = CORS_ORIGINS,
+        allow_origin_regex = r"https://.*\.vercel\.app|https://.*\.onrender\.com",
+        allow_credentials  = True,
+        allow_methods      = ["*"],
+        allow_headers      = ["*"],
+    )
 
 
 # ── Routes ───────────────────────────────────────────────────
