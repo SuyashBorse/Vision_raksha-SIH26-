@@ -1,0 +1,209 @@
+/* src/index.css — VisionRaksha Global Healthcare AI Design System */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --navy: #1F2F42;
+  --navy-light: #26394D;
+  --teal: #22AEB0;
+  --teal-bright: #38C4C4;
+  --teal-soft: #76D6D2;
+  --teal-light: #E8F7F6;
+  --bg-main: #F7FAFB;
+  --white: #FFFFFF;
+  --text-primary: #263746;
+  --text-secondary: #657685;
+  --text-muted: #94A1AB;
+  --border: #E1E9EC;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-[#F7FAFB] text-[#263746] font-sans antialiased;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background: rgba(34, 174, 176, 0.2);
+  color: #1F2F42;
+}
+
+/* ── Centralized Component Utilities ── */
+@layer components {
+
+  /* ── Button System ── */
+  .btn-primary {
+    @apply inline-flex items-center justify-center font-semibold py-3 px-6 rounded-xl transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed;
+    background: #22AEB0;
+    color: #FFFFFF;
+    box-shadow: 0 4px 14px 0 rgba(34, 174, 176, 0.30);
+  }
+  .btn-primary:hover:not(:disabled) {
+    background: #1D9A9C;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px 0 rgba(34, 174, 176, 0.40);
+  }
+  .btn-primary:active {
+    transform: translateY(0);
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center font-semibold py-3 px-6 rounded-xl transition-all duration-200 cursor-pointer disabled:opacity-50;
+    background: #26394D;
+    color: #FFFFFF;
+  }
+  .btn-secondary:hover:not(:disabled) {
+    background: #1F2F42;
+    transform: translateY(-1px);
+  }
+
+  .btn-outline {
+    @apply inline-flex items-center justify-center font-semibold py-3 px-6 rounded-xl transition-all duration-200 cursor-pointer;
+    border: 1.5px solid #22AEB0;
+    color: #22AEB0;
+    background: transparent;
+  }
+  .btn-outline:hover {
+    background: rgba(34, 174, 176, 0.08);
+    transform: translateY(-1px);
+  }
+
+  .btn-ai {
+    @apply inline-flex items-center justify-center font-bold py-3 px-6 rounded-xl transition-all duration-200 cursor-pointer;
+    background: linear-gradient(135deg, #22AEB0 0%, #38C4C4 100%);
+    color: #FFFFFF;
+    box-shadow: 0 4px 14px 0 rgba(34, 174, 176, 0.35);
+  }
+  .btn-ai:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 22px 0 rgba(34, 174, 176, 0.45);
+  }
+
+  /* ── Card & Panel Styling ── */
+  .card-themed {
+    @apply bg-white rounded-2xl p-6 transition-all duration-300;
+    border: 1px solid #E1E9EC;
+    box-shadow: 0 2px 12px 0 rgba(34, 174, 176, 0.06);
+  }
+  .card-themed:hover {
+    border-color: rgba(34, 174, 176, 0.3);
+    box-shadow: 0 8px 30px 0 rgba(34, 174, 176, 0.12);
+    transform: translateY(-2px);
+  }
+
+  .card-static {
+    @apply bg-white rounded-2xl p-6;
+    border: 1px solid #E1E9EC;
+    box-shadow: 0 2px 12px 0 rgba(34, 174, 176, 0.06);
+  }
+
+  /* ── Section Titles ── */
+  .section-title {
+    @apply text-3xl md:text-4xl font-bold tracking-tight;
+    color: #1F2F42;
+  }
+
+  .section-subtitle {
+    @apply text-base md:text-lg mt-3 max-w-2xl mx-auto;
+    color: #657685;
+    line-height: 1.7;
+  }
+
+  /* ── Form Controls ── */
+  .input-themed {
+    @apply w-full px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200;
+    border: 1.5px solid #E1E9EC;
+    background: #F7FAFB;
+    color: #263746;
+  }
+  .input-themed:focus {
+    outline: none;
+    border-color: #22AEB0;
+    background: #FFFFFF;
+    box-shadow: 0 0 0 3px rgba(34, 174, 176, 0.12);
+  }
+  .input-themed::placeholder {
+    color: #94A1AB;
+  }
+
+  /* ── Feature Icon Circle ── */
+  .icon-circle {
+    @apply w-14 h-14 rounded-2xl flex items-center justify-center mb-4;
+    background: #E8F7F6;
+    color: #22AEB0;
+  }
+
+  /* ── Workflow Step ── */
+  .workflow-step {
+    @apply flex flex-col items-center text-center flex-shrink-0;
+    width: 120px;
+  }
+  .workflow-icon {
+    @apply w-16 h-16 rounded-full flex items-center justify-center mb-3 transition-all duration-300;
+    background: #E8F7F6;
+    border: 2px solid #22AEB0;
+    color: #22AEB0;
+  }
+  .workflow-step:hover .workflow-icon {
+    background: #22AEB0;
+    color: #FFFFFF;
+    transform: scale(1.05);
+    box-shadow: 0 4px 20px rgba(34, 174, 176, 0.3);
+  }
+
+  /* ── Nav Active Indicator ── */
+  .nav-active {
+    position: relative;
+  }
+  .nav-active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #22AEB0;
+    border-radius: 1px;
+  }
+}
+
+/* ── Medical Status Badges ── */
+.grade-0 { @apply bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-xl px-3 py-1 text-xs font-semibold; }
+.grade-1 { @apply bg-amber-50 text-amber-800 border border-amber-200 rounded-xl px-3 py-1 text-xs font-semibold; }
+.grade-2 { @apply bg-orange-50 text-orange-800 border border-orange-200 rounded-xl px-3 py-1 text-xs font-semibold; }
+.grade-3 { @apply bg-rose-50 text-rose-800 border border-rose-200 rounded-xl px-3 py-1 text-xs font-semibold; }
+.grade-4 { @apply bg-rose-950 text-rose-100 border border-rose-800 rounded-xl px-3 py-1 text-xs font-semibold; }
+
+/* ── Custom Scrollbars ── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #F7FAFB; }
+::-webkit-scrollbar-thumb { background: #76D6D2; border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: #22AEB0; }
+
+/* ── Scroll-driven Animations ── */
+.animate-on-scroll {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+.animate-on-scroll.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Stat Counter Animation ── */
+@keyframes countUp {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
+}
+.stat-value {
+  animation: countUp 0.5s ease-out forwards;
+}

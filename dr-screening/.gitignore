@@ -1,0 +1,14 @@
+.env
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pth
+node_modules/
+build/
+dist/
+.DS_Store
+*.egg-info/
+datasets/aptos2019/
+datasets/idrid/
+models/*.pth
