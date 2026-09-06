@@ -59,18 +59,17 @@ export default function DashboardPage() {
   const gradePie = gradeBar.filter(d => d.value > 0);
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="max-w-7xl mx-auto p-6 space-y-6">
 
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">Analytics Dashboard</h1>
-          <p className="text-xs text-gray-400 mt-0.5">
-            RetinAI · SIH26038 · Last updated {lastRefresh.toLocaleTimeString()}
+          <h1 className="text-2xl font-bold text-[#1F2F42] tracking-tight">Analytics Dashboard</h1>
+          <p className="text-xs text-[#94A1AB] font-medium mt-0.5">
+            VisionRaksha · Last updated {lastRefresh.toLocaleTimeString()}
           </p>
         </div>
-        <button onClick={fetch} disabled={loading}
-          className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 transition disabled:opacity-50">
+        <button onClick={fetch} disabled={loading} className="btn-primary gap-2 text-xs py-2.5 px-4">
           <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
           Refresh
         </button>
@@ -83,7 +82,7 @@ export default function DashboardPage() {
           label="Total Screened"
           value={stats?.total_screened ?? "—"}
           sub="All time"
-          color="blue"
+          color="teal"
           loading={loading}
         />
         <KPICard
@@ -91,7 +90,7 @@ export default function DashboardPage() {
           label="Referrals Needed"
           value={stats?.referral_needed ?? "—"}
           sub={`${stats?.referral_rate_pct ?? 0}% referral rate`}
-          color="orange"
+          color="amber"
           loading={loading}
         />
         <KPICard
@@ -99,7 +98,7 @@ export default function DashboardPage() {
           label="Validated"
           value={stats?.validated ?? "—"}
           sub={`${stats?.validation_rate_pct ?? 0}% validation rate`}
-          color="green"
+          color="emerald"
           loading={loading}
         />
         <KPICard
@@ -107,7 +106,7 @@ export default function DashboardPage() {
           label="Avg Confidence"
           value={stats ? `${stats.avg_confidence}%` : "—"}
           sub={`~${stats?.avg_processing_ms ?? 0}ms / scan`}
-          color="purple"
+          color="teal-bright"
           loading={loading}
         />
       </div>
@@ -116,23 +115,23 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
 
         {/* Grade distribution bar */}
-        <div className="lg:col-span-2 bg-white rounded-xl border border-gray-200 p-5">
-          <p className="text-sm font-semibold text-gray-700 mb-4">Grade Distribution</p>
+        <div className="lg:col-span-2 card-static p-5">
+          <p className="text-sm font-bold text-[#1F2F42] mb-4">Grade Distribution</p>
           {loading ? <ChartSkeleton /> :
            gradeBar.every(d => d.value === 0)
             ? <EmptyChart message="No screenings yet" />
             : (
               <ResponsiveContainer width="100%" height={200}>
                 <BarChart data={gradeBar} barSize={40}>
-                  <XAxis dataKey="name" tick={{ fontSize: 10 }} />
-                  <YAxis allowDecimals={false} tick={{ fontSize: 11 }} />
+                  <XAxis dataKey="name" tick={{ fontSize: 10, fill: '#657685' }} />
+                  <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: '#657685' }} />
                   <Tooltip
                     formatter={(val) => [val, "Patients"]}
-                    contentStyle={{ borderRadius: 8, fontSize: 12 }}
+                    contentStyle={{ borderRadius: 12, fontSize: 12, border: '1px solid #E1E9EC' }}
                   />
-                  <Bar dataKey="value" radius={[5, 5, 0, 0]}>
+                  <Bar dataKey="value" radius={[8, 8, 0, 0]}>
                     {gradeBar.map(entry => (
-                      <Cell key={entry.name} fill={GRADE_COLORS[entry.name] ?? "#6b7280"} />
+                      <Cell key={entry.name} fill={GRADE_COLORS[entry.name] ?? "#76D6D2"} />
                     ))}
                   </Bar>
                 </BarChart>
@@ -142,8 +141,8 @@ export default function DashboardPage() {
         </div>
 
         {/* Pie chart */}
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
-          <p className="text-sm font-semibold text-gray-700 mb-4">Severity Breakdown</p>
+        <div className="card-static p-5">
+          <p className="text-sm font-bold text-[#1F2F42] mb-4">Severity Breakdown</p>
           {loading ? <ChartSkeleton /> :
            gradePie.length === 0
             ? <EmptyChart message="No data yet" />
@@ -162,10 +161,10 @@ export default function DashboardPage() {
                     fontSize={9}
                   >
                     {gradePie.map(entry => (
-                      <Cell key={entry.name} fill={GRADE_COLORS[entry.name] ?? "#6b7280"} />
+                      <Cell key={entry.name} fill={GRADE_COLORS[entry.name] ?? "#76D6D2"} />
                     ))}
                   </Pie>
-                  <Tooltip contentStyle={{ borderRadius: 8, fontSize: 12 }} />
+                  <Tooltip contentStyle={{ borderRadius: 12, fontSize: 12, border: '1px solid #E1E9EC' }} />
                 </PieChart>
               </ResponsiveContainer>
             )
@@ -177,9 +176,9 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
         {/* Model status */}
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
-          <p className="text-sm font-semibold text-gray-700 mb-3">System Status</p>
-          <div className="space-y-2">
+        <div className="card-static p-5">
+          <p className="text-sm font-bold text-[#1F2F42] mb-3">System Status</p>
+          <div className="space-y-2.5">
             {[
               { label: "AI Model",       status: "demo",   note: "Train on Kaggle to activate" },
               { label: "Database",       status: "ok",     note: "SQLite (dev mode)"           },
@@ -188,12 +187,12 @@ export default function DashboardPage() {
               { label: "Eye Detection",  status: "ok",     note: "OpenCV Haar cascade"         },
             ].map(({ label, status, note }) => (
               <div key={label} className="flex items-center justify-between text-sm">
-                <span className="text-gray-600">{label}</span>
+                <span className="text-[#263746] font-medium">{label}</span>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-gray-400">{note}</span>
-                  <span className={`w-2 h-2 rounded-full ${
-                    status === "ok" ? "bg-green-500" :
-                    status === "demo" ? "bg-yellow-400" : "bg-red-500"
+                  <span className="text-xs text-[#94A1AB] font-mono">{note}</span>
+                  <span className={`w-2.5 h-2.5 rounded-full ${
+                    status === "ok" ? "bg-[#22AEB0]" :
+                    status === "demo" ? "bg-[#38C4C4]" : "bg-rose-500"
                   }`} />
                 </div>
               </div>
@@ -201,35 +200,38 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Quick stats / SIH info */}
-        <div className="bg-gradient-to-br from-blue-700 to-blue-900 rounded-xl p-5 text-white">
-          <p className="text-sm font-semibold mb-3 text-blue-200">SIH 2026 · SIH26038</p>
-          <p className="font-bold text-lg leading-tight mb-3">
-            Explainable AI for Diabetic Retinopathy Screening
-          </p>
-          <div className="space-y-1.5 text-sm">
-            {[
-              "Organisation: MathWorks",
-              "Category: MedTech / AI",
-              "Model: EfficientNet-B4 + Grad-CAM",
-              "Dataset: APTOS 2019 + IDRiD",
-              "Target: Sensitivity >90%, Specificity >85%",
-            ].map(line => (
-              <p key={line} className="text-blue-200 text-xs">{line}</p>
-            ))}
+        {/* Quick stats */}
+        <div className="relative bg-cover bg-center rounded-2xl p-6 text-white shadow-card overflow-hidden" style={{ backgroundImage: 'url(/ai_dashboard.jpg)' }}>
+          <div className="absolute inset-0 bg-[#1F2F42]/85 z-0" />
+          <div className="relative z-10">
+            <p className="text-xs font-semibold mb-2 text-[#76D6D2] uppercase tracking-wider">AI Clinical Platform</p>
+            <p className="font-bold text-lg leading-tight mb-3 text-white">
+              Explainable AI for Diabetic Retinopathy Screening
+            </p>
+            <div className="space-y-1.5 text-xs">
+              {[
+                "Platform: Tele-Ophthalmology AI",
+                "Category: Multi-Modal Diagnostics",
+                "Model: EfficientNet-B4 + Grad-CAM",
+                "Dataset: APTOS 2019 + IDRiD",
+                "Target: Sensitivity >90%, Specificity >85%",
+              ].map(line => (
+                <p key={line} className="text-[#94A1AB] text-xs font-medium">{line}</p>
+              ))}
+            </div>
           </div>
         </div>
       </div>
 
       {/* Demo mode notice */}
-      <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
-        <Clock size={18} className="text-amber-500 flex-shrink-0 mt-0.5" />
+      <div className="bg-[#E8F7F6] border border-[#22AEB0]/20 rounded-2xl p-4 flex items-start gap-3">
+        <Clock size={18} className="text-[#22AEB0] flex-shrink-0 mt-0.5" />
         <div>
-          <p className="text-sm font-semibold text-amber-800">Demo Mode Active</p>
-          <p className="text-xs text-amber-700 mt-0.5">
+          <p className="text-xs font-bold text-[#1F2F42] uppercase tracking-wider">Demo Mode Active</p>
+          <p className="text-xs text-[#657685] mt-0.5 leading-relaxed font-medium">
             Running without trained model — all Grade 2 results are pre-set.
             Train EfficientNet-B4 on Kaggle (P100 GPU, ~3–4 hrs) to activate real AI grading.
-            See <code className="bg-amber-100 px-1 rounded">notebooks/train_dr_model.ipynb</code>
+            See <code className="bg-[#F7FAFB] px-2 py-0.5 rounded-lg text-[#1F2F42] font-mono text-[11px] border border-[#E1E9EC]">notebooks/train_dr_model.ipynb</code>
           </p>
         </div>
       </div>
@@ -240,21 +242,23 @@ export default function DashboardPage() {
 // ── Helpers ───────────────────────────────────────────────────
 
 function KPICard({ icon: Icon, label, value, sub, color, loading }) {
-  const colors = {
-    blue:   "bg-blue-50   text-blue-700   border-blue-200",
-    orange: "bg-orange-50 text-orange-700 border-orange-200",
-    green:  "bg-green-50  text-green-700  border-green-200",
-    purple: "bg-purple-50 text-purple-700 border-purple-200",
+  const iconColors = {
+    teal:          "text-[#22AEB0] bg-[#E8F7F6] border-[#22AEB0]/15",
+    "teal-bright": "text-[#38C4C4] bg-[#E8F7F6] border-[#38C4C4]/15",
+    amber:         "text-amber-600 bg-amber-50 border-amber-200/50",
+    emerald:       "text-emerald-600 bg-emerald-50 border-emerald-200/50",
   };
   return (
-    <div className={`rounded-xl border p-4 ${colors[color]}`}>
-      <Icon size={18} className="mb-2 opacity-60" />
+    <div className="card-static p-5 transition-all hover:shadow-card-hover hover:border-[#22AEB0]/20">
+      <div className={`p-2.5 rounded-xl border w-fit mb-3 ${iconColors[color] || iconColors.teal}`}>
+        <Icon size={20} strokeWidth={1.5} />
+      </div>
       {loading
-        ? <div className="h-8 w-16 bg-current opacity-10 rounded animate-pulse" />
-        : <p className="text-2xl font-bold">{value}</p>
+        ? <div className="h-8 w-16 bg-[#E1E9EC] rounded-xl animate-pulse" />
+        : <p className="text-2xl font-bold text-[#1F2F42]">{value}</p>
       }
-      <p className="text-xs font-semibold mt-1">{label}</p>
-      <p className="text-xs opacity-60 mt-0.5">{sub}</p>
+      <p className="text-xs font-semibold mt-1 text-[#263746]">{label}</p>
+      <p className="text-xs text-[#94A1AB] mt-0.5 font-medium">{sub}</p>
     </div>
   );
 }
@@ -263,7 +267,7 @@ function ChartSkeleton() {
   return (
     <div className="h-48 flex items-end gap-2 px-2 animate-pulse">
       {[40,70,55,30,20].map((h, i) => (
-        <div key={i} className="flex-1 bg-gray-100 rounded-t" style={{ height: `${h}%` }} />
+        <div key={i} className="flex-1 bg-[#E1E9EC] rounded-t" style={{ height: `${h}%` }} />
       ))}
     </div>
   );
@@ -271,7 +275,7 @@ function ChartSkeleton() {
 
 function EmptyChart({ message }) {
   return (
-    <div className="h-48 flex items-center justify-center text-gray-300 text-sm">
+    <div className="h-48 flex items-center justify-center text-[#94A1AB] text-sm">
       {message}
     </div>
   );

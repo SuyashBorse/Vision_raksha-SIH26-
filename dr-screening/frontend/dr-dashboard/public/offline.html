@@ -8,7 +8,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: system-ui, sans-serif;
-      background: #eff6ff;
+      background: #F0F7FA;
       min-height: 100vh;
       display: flex;
       align-items: center;
@@ -17,41 +17,44 @@
     }
     .card {
       background: white;
-      border-radius: 16px;
+      border-radius: 24px;
       padding: 40px;
       max-width: 400px;
       width: 100%;
       text-align: center;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      box-shadow: 0 10px 30px rgba(27, 147, 197, 0.1);
+      border: 1px solid #B9DCED;
     }
     .icon { font-size: 48px; margin-bottom: 16px; }
-    h1 { color: #1d4ed8; font-size: 22px; margin-bottom: 8px; }
-    p  { color: #6b7280; font-size: 14px; line-height: 1.6; }
+    h1 { color: #0A3347; font-size: 22px; margin-bottom: 8px; font-weight: 800; }
+    p  { color: #64748b; font-size: 14px; line-height: 1.6; }
     .badge {
       display: inline-block;
       margin-top: 20px;
-      background: #eff6ff;
-      color: #1d4ed8;
-      border: 1px solid #bfdbfe;
+      background: #F0F7FA;
+      color: #1B93C5;
+      border: 1px solid #B9DCED;
       border-radius: 999px;
       padding: 6px 16px;
       font-size: 12px;
-      font-weight: 600;
+      font-weight: 700;
     }
     .retry {
       margin-top: 20px;
       display: block;
-      background: #1d4ed8;
+      background: #1B93C5;
       color: white;
       border: none;
-      border-radius: 10px;
+      border-radius: 999px;
       padding: 12px 24px;
       font-size: 14px;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
       width: 100%;
+      box-shadow: 0 4px 14px rgba(27, 147, 197, 0.3);
+      transition: all 0.2s;
     }
-    .retry:hover { background: #1e40af; }
+    .retry:hover { background: #167CA7; }
   </style>
 </head>
 <body>
@@ -63,7 +66,7 @@
       Images captured will be saved and automatically
       synced when you reconnect.
     </p>
-    <span class="badge">RetinAI · SIH26038</span>
+    <span class="badge">RetinAI Screening Platform</span>
     <button class="retry" onclick="window.location.reload()">
       ↺ Try Again
     </button>

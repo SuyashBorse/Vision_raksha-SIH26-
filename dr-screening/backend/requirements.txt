@@ -16,7 +16,7 @@ torchcam>=0.3.2
 # ── Computer Vision ────────────────────────────────────────
 opencv-python-headless>=4.9.0
 Pillow>=10.0.0
-numpy>=1.26.0,<2.0.0
+numpy>=1.26.0
 albumentations>=1.4.0
 
 # ── Data ───────────────────────────────────────────────────

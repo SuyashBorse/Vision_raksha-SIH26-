@@ -6,11 +6,11 @@ import { useState, useEffect } from "react";
 import { AlertTriangle, CheckCircle, Info, ChevronDown, ChevronUp, Volume2, VolumeX, Sliders, FileJson } from "lucide-react";
 
 const GRADE_STYLES = {
-  0: { bg: "bg-green-50",  border: "border-green-400", text: "text-green-800",  badge: "bg-green-100"  },
-  1: { bg: "bg-yellow-50", border: "border-yellow-400", text: "text-yellow-800", badge: "bg-yellow-100" },
-  2: { bg: "bg-orange-50", border: "border-orange-400", text: "text-orange-800", badge: "bg-orange-100" },
-  3: { bg: "bg-red-50",    border: "border-red-500",    text: "text-red-800",    badge: "bg-red-100"    },
-  4: { bg: "bg-red-900",   border: "border-red-800",    text: "text-white",      badge: "bg-red-700"    },
+  0: { bg: "bg-emerald-50",  border: "border-emerald-300", text: "text-emerald-800",  badge: "bg-emerald-100"  },
+  1: { bg: "bg-amber-50",    border: "border-amber-300",   text: "text-amber-800",    badge: "bg-amber-100" },
+  2: { bg: "bg-orange-50",   border: "border-orange-300",  text: "text-orange-800",   badge: "bg-orange-100" },
+  3: { bg: "bg-rose-50",     border: "border-rose-400",    text: "text-rose-800",     badge: "bg-rose-100"    },
+  4: { bg: "bg-rose-900",    border: "border-rose-800",    text: "text-white",        badge: "bg-rose-700"    },
 };
 
 const PROB_COLORS = ["#16a34a", "#ca8a04", "#ea580c", "#dc2626", "#7f1d1d"];
@@ -50,7 +50,7 @@ const REGIONAL_TRANSLATIONS = {
     label: "বাংলা (Bengali)",
     langCode: "bn-IN",
     title: "রোগীর জন্য অডিও সারাংশ",
-    text: (res) => `চোখের পরীক্ষা সম্পন্ন হয়েছে। ফলাফল: গ্রেড ${res.grade}। পরামর্শ: ${res.grade >= 2 ? "অবিলম্বে চক্ষু বিশেষজ্ঞের পরামর্শ নিন।" : "নিয়মিত চোখ পরীক্ষা করान।"}`
+    text: (res) => `চোখের পরীক্ষা সম্পন্ন হয়েছে। ফলাফল: গ্রেড ${res.grade}। পরামর্শ: ${res.grade >= 2 ? "অবিলম্বে চক্ষু বিশেষজ্ঞের পরামর্শ নিন।" : "নিয়মিত চোখ পরীক্ষা করান।"}`
   }
 };
 
@@ -96,7 +96,7 @@ export default function ResultSection({ result, onValidate }) {
     <div className="space-y-4 mt-6">
 
       {/* ── Grade banner ──────────────────────────────── */}
-      <div className={`rounded-xl border-2 p-5 ${style.bg} ${style.border}`}>
+      <div className={`rounded-2xl border-2 p-5 ${style.bg} ${style.border}`}>
         <div className="flex items-start justify-between">
           <div>
             <div className="flex items-center gap-2 mb-1">
@@ -110,7 +110,7 @@ export default function ResultSection({ result, onValidate }) {
             </div>
             <p className={`text-sm font-semibold ${style.text}`}>{result.action}</p>
             {result.recommended_action_timeline && (
-              <p className="text-xs font-medium text-gray-700 mt-1 bg-white/70 inline-block px-2.5 py-0.5 rounded-md border border-gray-200">
+              <p className="text-xs font-medium text-[#657685] mt-1 bg-white/70 inline-block px-2.5 py-0.5 rounded-lg border border-[#E1E9EC]">
                 ⏱ {result.recommended_action_timeline}
               </p>
             )}
@@ -124,19 +124,19 @@ export default function ResultSection({ result, onValidate }) {
         </div>
 
         {/* ── DME & Multi-Modal Badges ── */}
-        <div className="mt-3 pt-3 border-t border-gray-200/60 flex flex-wrap gap-2 items-center text-xs">
-          <span className={`px-2.5 py-1 rounded-full font-semibold ${
+        <div className="mt-3 pt-3 border-t border-[#E1E9EC]/60 flex flex-wrap gap-2 items-center text-xs">
+          <span className={`px-2.5 py-1 rounded-lg font-semibold ${
             result.dme_risk === "high_risk"
-              ? "bg-red-100 text-red-800 border border-red-300"
+              ? "bg-rose-100 text-rose-800 border border-rose-200"
               : result.dme_risk === "suspected"
-              ? "bg-amber-100 text-amber-800 border border-amber-300"
-              : "bg-green-100 text-green-800 border border-green-200"
+              ? "bg-amber-100 text-amber-800 border border-amber-200"
+              : "bg-emerald-100 text-emerald-800 border border-emerald-200"
           }`}>
             👁 DME: {result.dme_risk === "high_risk" ? "High Risk (CSME)" : result.dme_risk === "suspected" ? "Suspected" : "No Edema"}
           </span>
 
           {result.progression_risk_5yr !== undefined && (
-            <span className="px-2.5 py-1 rounded-full font-semibold bg-blue-50 text-blue-800 border border-blue-200">
+            <span className="px-2.5 py-1 rounded-lg font-semibold bg-[#E8F7F6] text-[#22AEB0] border border-[#22AEB0]/20">
               📈 5-Yr Risk: {result.progression_risk_5yr}% ({result.systemic_risk?.toUpperCase()})
             </span>
           )}
@@ -146,7 +146,7 @@ export default function ResultSection({ result, onValidate }) {
               href={`/api/report/${result.screening_id}/fhir`}
               target="_blank"
               rel="noopener noreferrer"
-              className="ml-auto inline-flex items-center gap-1 px-2.5 py-1 rounded-full font-medium bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300 transition"
+              className="ml-auto inline-flex items-center gap-1 px-2.5 py-1 rounded-lg font-medium bg-[#F7FAFB] hover:bg-[#E8F7F6] text-[#657685] border border-[#E1E9EC] transition"
               title="Download official HL7 FHIR DiagnosticReport JSON"
             >
               <FileJson size={13} /> FHIR (ABHA)
@@ -162,13 +162,13 @@ export default function ResultSection({ result, onValidate }) {
       </div>
 
       {/* ── Rural Multi-Language Voice Summary (ASHA Support) ── */}
-      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4">
+      <div className="bg-gradient-to-r from-[#E8F7F6] to-[#F7FAFB] border border-[#22AEB0]/15 rounded-2xl p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <span className="text-base">🗣️</span>
+          <div className="flex items-center gap-3">
+            <span className="text-xl p-2.5 bg-white rounded-2xl shadow-soft border border-[#E1E9EC]">🗣️</span>
             <div>
-              <p className="text-xs font-bold text-blue-900">{langConfig.title}</p>
-              <p className="text-xs text-blue-700">{audioSummaryText}</p>
+              <p className="text-xs font-bold text-[#1F2F42] uppercase tracking-wider">{langConfig.title}</p>
+              <p className="text-xs text-[#657685] font-medium leading-relaxed mt-0.5">{audioSummaryText}</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -180,7 +180,7 @@ export default function ResultSection({ result, onValidate }) {
                 setSelectedLang(e.target.value);
               }}
               aria-label="Select Patient Summary Language"
-              className="text-xs border border-blue-300 bg-white rounded-lg px-2.5 py-1.5 font-medium text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="text-xs border border-[#E1E9EC] bg-white rounded-xl px-4 py-2 font-semibold text-[#263746] focus:outline-none focus:ring-2 focus:ring-[#22AEB0]"
             >
               {Object.entries(REGIONAL_TRANSLATIONS).map(([k, v]) => (
                 <option key={k} value={k}>{v.label}</option>
@@ -188,10 +188,10 @@ export default function ResultSection({ result, onValidate }) {
             </select>
             <button
               onClick={toggleSpeech}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition shadow-sm ${
+              className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                 isPlayingAudio
-                  ? "bg-red-600 text-white hover:bg-red-700"
-                  : "bg-blue-600 text-white hover:bg-blue-700"
+                  ? "bg-rose-600 text-white hover:bg-rose-700 shadow-md"
+                  : "btn-ai text-xs py-2 px-4"
               }`}
             >
               {isPlayingAudio ? <VolumeX size={14} /> : <Volume2 size={14} />}
@@ -202,11 +202,11 @@ export default function ResultSection({ result, onValidate }) {
       </div>
 
       {/* ── Image comparison: original | heatmap ─────── */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        <div className="px-4 py-2.5 text-sm font-semibold text-gray-700 border-b border-gray-100 flex flex-wrap items-center justify-between gap-2">
-          <span>Grad-CAM Explainability — <span className="font-normal text-gray-500">Red regions show pathological focal clusters</span></span>
-          <div className="flex items-center gap-2 text-xs font-normal text-gray-500">
-            <Sliders size={13} />
+      <div className="card-static overflow-hidden p-0">
+        <div className="px-5 py-3.5 text-xs font-semibold text-[#1F2F42] border-b border-[#E1E9EC] bg-[#F7FAFB] flex flex-wrap items-center justify-between gap-2">
+          <span>Grad-CAM Explainability — <span className="font-medium text-[#657685]">Red regions show pathological focal clusters</span></span>
+          <div className="flex items-center gap-2 text-xs font-medium text-[#657685]">
+            <Sliders size={13} className="text-[#22AEB0]" />
             <span>Sensitivity:</span>
             <input
               type="range"
@@ -214,27 +214,27 @@ export default function ResultSection({ result, onValidate }) {
               max="90"
               value={heatmapSensitivity}
               onChange={(e) => setHeatmapSensitivity(Number(e.target.value))}
-              className="w-20 accent-blue-600 h-1 cursor-pointer"
+              className="w-20 accent-[#22AEB0] h-1.5 cursor-pointer"
             />
-            <span className="w-6 font-mono text-right">{heatmapSensitivity}%</span>
+            <span className="w-6 font-mono text-right font-bold text-[#22AEB0]">{heatmapSensitivity}%</span>
           </div>
         </div>
         <div className="grid grid-cols-2 gap-0">
-          <div className="border-r border-gray-100">
-            <p className="text-xs text-center text-gray-400 py-1">Original Fundus</p>
+          <div className="border-r border-[#E1E9EC]">
+            <p className="text-xs text-center text-[#94A1AB] py-1 font-medium">Original Fundus</p>
             <img
               src={`data:image/jpeg;base64,${result.original_image}`}
               alt="Original fundus"
-              className="w-full object-contain bg-gray-900 max-h-56"
+              className="w-full object-contain bg-[#0a0a0a] max-h-56"
             />
           </div>
           <div>
-            <p className="text-xs text-center text-gray-400 py-1">Grad-CAM Heatmap</p>
+            <p className="text-xs text-center text-[#94A1AB] py-1 font-medium">Grad-CAM Heatmap</p>
             <img
               src={`data:image/jpeg;base64,${result.heatmap_image}`}
               alt="Grad-CAM heatmap"
               style={{ filter: `contrast(${100 + (heatmapSensitivity - 50) * 0.8}%)` }}
-              className="w-full object-contain bg-gray-900 max-h-56"
+              className="w-full object-contain bg-[#0a0a0a] max-h-56"
             />
           </div>
         </div>
@@ -242,30 +242,30 @@ export default function ResultSection({ result, onValidate }) {
 
       {/* ── Multi-Modal Vitals & Doctor Triage Summary ── */}
       {result.doctor_summary && (
-        <div className="bg-indigo-50/70 border border-indigo-200 rounded-xl p-4 space-y-2">
+        <div className="bg-[#E8F7F6] border border-[#22AEB0]/15 rounded-2xl p-4 space-y-2">
           <div className="flex items-center justify-between">
-            <p className="text-xs font-bold text-indigo-950 uppercase tracking-wider">
+            <p className="text-xs font-bold text-[#1F2F42] uppercase tracking-wider">
               🏥 Multi-Modal Triage & Doctor Summary
             </p>
             {result.progression_risk_5yr !== undefined && (
-              <span className="text-xs font-bold text-indigo-800 bg-indigo-100 px-2.5 py-0.5 rounded-full">
+              <span className="text-xs font-semibold text-[#22AEB0] bg-white px-3 py-0.5 rounded-lg border border-[#22AEB0]/15">
                 5-Yr Progression: {result.progression_risk_5yr}%
               </span>
             )}
           </div>
-          <p className="text-xs text-indigo-900 leading-relaxed font-medium">
+          <p className="text-xs text-[#263746] leading-relaxed font-medium">
             {result.doctor_summary}
           </p>
         </div>
       )}
 
       {/* ── Clinical findings ─────────────────────────── */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4">
-        <p className="text-sm font-semibold text-gray-700 mb-2">Clinical Findings (AI Detected)</p>
+      <div className="card-static p-4">
+        <p className="text-sm font-bold text-[#1F2F42] mb-2">Clinical Findings (AI Detected)</p>
         <ul className="space-y-1">
           {(result.findings || []).map((f, i) => (
-            <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
-              <span className="mt-0.5 text-blue-400 font-bold text-xs">{i + 1}.</span>
+            <li key={i} className="flex items-start gap-2 text-sm text-[#657685] font-medium">
+              <span className="mt-0.5 text-[#22AEB0] font-bold text-xs">{i + 1}.</span>
               {f}
             </li>
           ))}
@@ -273,9 +273,9 @@ export default function ResultSection({ result, onValidate }) {
       </div>
 
       {/* ── Probability bars (collapsible) ───────────── */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4">
+      <div className="card-static p-4">
         <button
-          className="w-full flex items-center justify-between text-sm font-semibold text-gray-700"
+          className="w-full flex items-center justify-between text-sm font-bold text-[#1F2F42]"
           onClick={() => setShowProbs(!showProbs)}
         >
           Grade Probability Distribution
@@ -285,10 +285,10 @@ export default function ResultSection({ result, onValidate }) {
           <div className="mt-3 space-y-2">
             {result.probabilities && Object.entries(result.probabilities).map(([label, prob], i) => (
               <div key={label}>
-                <div className="flex justify-between text-xs text-gray-500 mb-0.5">
+                <div className="flex justify-between text-xs text-[#657685] mb-0.5 font-medium">
                   <span>{label}</span><span>{prob.toFixed(1)}%</span>
                 </div>
-                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                <div className="h-2 bg-[#F7FAFB] rounded-full overflow-hidden border border-[#E1E9EC]">
                   <div
                     className="h-full rounded-full transition-all duration-500"
                     style={{ width: `${prob}%`, backgroundColor: PROB_COLORS[i] }}
@@ -302,10 +302,10 @@ export default function ResultSection({ result, onValidate }) {
 
       {/* ── ICDRS note ────────────────────────────────── */}
       {result.icdrs_notes && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+        <div className="bg-[#F7FAFB] border border-[#E1E9EC] rounded-2xl p-3.5">
           <div className="flex gap-2">
-            <Info size={14} className="text-blue-500 mt-0.5 flex-shrink-0" />
-            <p className="text-xs text-blue-700">{result.icdrs_notes}</p>
+            <Info size={16} className="text-[#22AEB0] mt-0.5 flex-shrink-0" />
+            <p className="text-xs text-[#263746] font-medium leading-relaxed">{result.icdrs_notes}</p>
           </div>
         </div>
       )}
@@ -339,48 +339,48 @@ function ValidationButtons({ screeningId, onValidate }) {
   };
 
   if (done) return (
-    <div className="flex items-center gap-2 bg-green-50 border border-green-300 rounded-xl p-4">
-      <CheckCircle className="text-green-600" size={20} />
-      <p className="text-sm font-medium text-green-800">Validation recorded successfully</p>
+    <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-200 rounded-2xl p-4">
+      <CheckCircle className="text-emerald-600" size={20} />
+      <p className="text-sm font-medium text-emerald-800">Validation recorded successfully</p>
     </div>
   );
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-4 space-y-3">
-      <p className="text-sm font-semibold text-gray-700">Doctor Validation</p>
+    <div className="card-static p-5 space-y-4">
+      <p className="text-sm font-bold text-[#1F2F42]">Doctor Validation</p>
 
       <textarea
         value={note} onChange={e => setNote(e.target.value)}
         placeholder="Clinical note (optional)..."
-        className="w-full text-sm border border-gray-200 rounded-lg p-2.5 resize-none h-20 focus:outline-none focus:ring-2 focus:ring-blue-300"
+        className="w-full text-sm border border-[#E1E9EC] bg-[#F7FAFB] rounded-xl p-3.5 resize-none h-20 focus:outline-none focus:ring-2 focus:ring-[#22AEB0] focus:bg-white transition"
       />
 
       <div className="flex gap-2">
         <button onClick={confirm}
-          className="flex-1 bg-blue-700 text-white py-2.5 rounded-lg text-sm font-semibold hover:bg-blue-800 transition">
+          className="flex-1 btn-primary py-2.5 px-4 text-sm">
           ✓ Confirm AI Recommendation
         </button>
         <button onClick={() => setShow(!show)}
-          className="flex-1 border border-red-300 text-red-600 py-2.5 rounded-lg text-sm font-semibold hover:bg-red-50 transition">
+          className="flex-1 border border-rose-300 text-rose-600 py-2.5 px-4 rounded-xl text-sm font-semibold hover:bg-rose-50 transition cursor-pointer">
           ✗ Override
         </button>
       </div>
 
       {show && (
-        <div className="space-y-2">
-          <p className="text-xs font-medium text-gray-600">Override reason:</p>
+        <div className="space-y-3 pt-1 border-t border-[#E1E9EC]">
+          <p className="text-xs font-medium text-[#657685]">Override reason:</p>
           {["Image quality insufficient for confident grading",
             "Clinical examination shows different findings",
             "Patient history suggests different grade"].map(r => (
-            <label key={r} className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+            <label key={r} className="flex items-center gap-2 text-sm text-[#657685] cursor-pointer">
               <input type="radio" name="reason" value={r}
                 onChange={e => setReason(e.target.value)}
-                className="accent-red-500" />
+                className="accent-[#22AEB0]" />
               {r}
             </label>
           ))}
           <button onClick={override}
-            className="w-full bg-red-600 text-white py-2 rounded-lg text-sm font-semibold hover:bg-red-700 transition mt-1">
+            className="w-full bg-rose-600 text-white py-2.5 rounded-xl text-sm font-semibold hover:bg-rose-700 shadow-md transition cursor-pointer">
             Submit Override
           </button>
         </div>
