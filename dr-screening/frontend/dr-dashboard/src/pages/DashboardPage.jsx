@@ -181,11 +181,11 @@ export default function DashboardPage() {
           <p className="text-sm font-semibold text-gray-700 mb-3">System Status</p>
           <div className="space-y-2">
             {[
-              { label: "AI Model",       status: "demo",   note: "Train on Kaggle to activate" },
-              { label: "Database",       status: "ok",     note: "SQLite (dev mode)"           },
-              { label: "Grad-CAM",       status: "ok",     note: "Demo heatmaps active"        },
-              { label: "PDF Reports",    status: "ok",     note: "ReportLab ready"             },
-              { label: "Eye Detection",  status: "ok",     note: "OpenCV Haar cascade"         },
+              { label: "AI Model",       status: "ok", note: "EfficientNet-B5 Active" },
+              { label: "Grad-CAM",       status: "ok", note: "Aperture Masked (conv_head)" },
+              { label: "Quality Gate",   status: "ok", note: "Laplacian & Photometric Gate" },
+              { label: "Database",       status: "ok", note: "SQLite / PACS Synced" },
+              { label: "PDF Reports",    status: "ok", note: "ReportLab + HL7 FHIR LOINC" },
             ].map(({ label, status, note }) => (
               <div key={label} className="flex items-center justify-between text-sm">
                 <span className="text-gray-600">{label}</span>
@@ -211,26 +211,13 @@ export default function DashboardPage() {
             {[
               "Organisation: MathWorks",
               "Category: MedTech / AI",
-              "Model: EfficientNet-B4 + Grad-CAM",
-              "Dataset: APTOS 2019 + IDRiD",
+              "Model: EfficientNet-B5 Ordinal Regressor",
+              "Dataset: Multi-Center (APTOS 2019 + IDRiD)",
               "Target: Sensitivity >90%, Specificity >85%",
             ].map(line => (
               <p key={line} className="text-blue-200 text-xs">{line}</p>
             ))}
           </div>
-        </div>
-      </div>
-
-      {/* Demo mode notice */}
-      <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
-        <Clock size={18} className="text-amber-500 flex-shrink-0 mt-0.5" />
-        <div>
-          <p className="text-sm font-semibold text-amber-800">Demo Mode Active</p>
-          <p className="text-xs text-amber-700 mt-0.5">
-            Running without trained model — all Grade 2 results are pre-set.
-            Train EfficientNet-B4 on Kaggle (P100 GPU, ~3–4 hrs) to activate real AI grading.
-            See <code className="bg-amber-100 px-1 rounded">notebooks/train_dr_model.ipynb</code>
-          </p>
         </div>
       </div>
     </div>

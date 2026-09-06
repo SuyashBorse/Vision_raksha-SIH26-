@@ -306,7 +306,7 @@ export default function ScreenPage() {
 
           <button
             onClick={() => {
-              setVitals({ name: "Anonymous Patient", age: 55, abha_id: "ANON-DEMO" });
+              setVitals({ name: "Anonymous Patient", age: 55, abha_id: "ANON-CLINICAL" });
               setStep(1);
             }}
             className="w-full text-center text-xs text-gray-400 hover:text-gray-600 transition"

@@ -52,13 +52,8 @@ async def lifespan(app: FastAPI):
 
     pipeline   = init_pipeline(model_path=model_path, device="cpu")
     logger.info(
-        f"AI Pipeline ready | demo_mode={pipeline.demo_mode}"
+        f"AI Pipeline ready | model_active={not pipeline.demo_mode}"
     )
-
-    # Pre-load demo patient cases for live demo
-    from routes.demo import load_demo_cases
-    load_demo_cases()
-    logger.info("Demo cases pre-loaded")
 
     yield
 
@@ -98,7 +93,6 @@ from routes.validate  import router as validate_router
 from routes.stats     import router as stats_router
 from routes.patients  import router as patients_router
 from routes.report    import router as report_router
-from routes.demo      import router as demo_router
 from routes.followups import router as followups_router
 from auth.router      import router as auth_router
 
@@ -108,7 +102,6 @@ app.include_router(validate_router,  prefix="/api",  tags=["Validation"])
 app.include_router(stats_router,     prefix="/api",  tags=["Analytics"])
 app.include_router(patients_router,  prefix="/api",  tags=["Patients"])
 app.include_router(report_router,    prefix="/api",  tags=["Reports"])
-app.include_router(demo_router,      prefix="/api",  tags=["Demo"])
 app.include_router(followups_router, prefix="/api",  tags=["Follow-Ups"])
 
 

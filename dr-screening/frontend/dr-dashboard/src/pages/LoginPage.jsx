@@ -116,10 +116,10 @@ export default function LoginPage() {
             </button>
           </form>
 
-          {/* Quick Login for SIH Demo */}
+          {/* Quick Role Login */}
           <div className="mt-6 pt-6 border-t border-gray-100">
             <p className="text-xs text-gray-400 text-center mb-3">
-              SIH Demo — Quick Login
+              Quick Role Login
             </p>
             <div className="grid grid-cols-3 gap-2">
               <button

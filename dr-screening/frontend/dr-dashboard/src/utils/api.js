@@ -76,13 +76,6 @@ export const getPatient = async (id) => {
 export const getReportUrl = (screeningId) =>
   `${API_BASE}/api/report/${screeningId}`;
 
-export const liveDemo = async (file, caseIndex = 0) => {
-  const form = new FormData();
-  form.append("file", file);
-  form.append("case_index", caseIndex);
-  const res = await api.post("/api/live-demo", form);
-  return res.data;
-};
 
 export const healthCheck = async () => {
   const res = await api.get("/health");
