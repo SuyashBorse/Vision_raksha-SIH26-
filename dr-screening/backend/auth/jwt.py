@@ -9,13 +9,14 @@
 
 import os
 import logging
+import hashlib
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
-from passlib.context import CryptContext
+import bcrypt
 from jose import JWTError, jwt
 
 logger = logging.getLogger(__name__)
@@ -36,13 +37,18 @@ ALGORITHM       = "HS256"
 ACCESS_EXPIRE   = int(os.getenv("JWT_EXPIRE_MINUTES", "480"))   # 8 hours (field shift)
 
 # ── Password hashing ──────────────────────────────────────────
-pwd_ctx = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# Using bcrypt directly (passlib is unmaintained and incompatible with bcrypt 5.x)
+
+def _prepare(plain: str) -> bytes:
+    """SHA-256 pre-hash so bcrypt always receives a <=64-byte hex string.
+    This removes bcrypt's 72-byte password limit transparently."""
+    return hashlib.sha256(plain.encode("utf-8")).hexdigest().encode("utf-8")
 
 def hash_password(plain: str) -> str:
-    return pwd_ctx.hash(plain)
+    return bcrypt.hashpw(_prepare(plain), bcrypt.gensalt()).decode("utf-8")
 
 def verify_password(plain: str, hashed: str) -> bool:
-    return pwd_ctx.verify(plain, hashed)
+    return bcrypt.checkpw(_prepare(plain), hashed.encode("utf-8"))
 
 # ── JWT token ─────────────────────────────────────────────────
 class TokenData(BaseModel):

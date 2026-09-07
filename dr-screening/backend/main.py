@@ -110,26 +110,37 @@ else:
 
 
 # ── Routes ───────────────────────────────────────────────────
-from routes.analyse   import router as analyse_router
-from routes.validate  import router as validate_router
-from routes.stats     import router as stats_router
-from routes.patients  import router as patients_router
-from routes.report    import router as report_router
-from routes.followups import router as followups_router
-from auth.router      import router as auth_router
+from routes.analyse       import router as analyse_router
+from routes.validate      import router as validate_router
+from routes.stats         import router as stats_router
+from routes.patients      import router as patients_router
+from routes.report        import router as report_router
+from routes.demo          import router as demo_router
+from routes.followups     import router as followups_router
+from routes.admin         import router as admin_router
+from routes.doctor_reviews import router as reviews_router
+from auth.router          import router as auth_router
 
-app.include_router(auth_router,      prefix="/auth", tags=["Auth"])
-app.include_router(analyse_router,   prefix="/api",  tags=["Screening"])
-app.include_router(validate_router,  prefix="/api",  tags=["Validation"])
-app.include_router(stats_router,     prefix="/api",  tags=["Analytics"])
-app.include_router(patients_router,  prefix="/api",  tags=["Patients"])
-app.include_router(report_router,    prefix="/api",  tags=["Reports"])
-app.include_router(followups_router, prefix="/api",  tags=["Follow-Ups"])
+app.include_router(auth_router,      prefix="/auth",        tags=["Auth"])
+app.include_router(analyse_router,   prefix="/api",         tags=["Screening"])
+app.include_router(validate_router,  prefix="/api",         tags=["Validation"])
+app.include_router(stats_router,     prefix="/api",         tags=["Analytics"])
+app.include_router(patients_router,  prefix="/api",         tags=["Patients"])
+app.include_router(report_router,    prefix="/api",         tags=["Reports"])
+app.include_router(demo_router,      prefix="/api",         tags=["Demo"])
+app.include_router(followups_router, prefix="/api",         tags=["Follow-Ups"])
+app.include_router(admin_router,     prefix="/api/admin",   tags=["Admin"])
+app.include_router(reviews_router,   prefix="/api/reviews", tags=["Doctor Reviews"])
 
 
 # ── Static Files & SPA Fallback (Frontend Integration) ────────
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
+
+# Serve uploaded screening images (fundus + heatmap)
+media_dir = os.path.join(os.path.dirname(__file__), "media")
+if os.path.exists(media_dir):
+    app.mount("/media", StaticFiles(directory=media_dir), name="media")
 
 dist_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "frontend", "dr-dashboard", "dist")
 if os.path.exists(dist_dir):
@@ -165,12 +176,11 @@ async def serve_spa(full_path: str):
 
 
 # ── Global error handler ──────────────────────────────────────
+# Note: bcrypt 72-byte limit is handled by SHA-256 pre-hashing in auth/jwt.py
 @app.exception_handler(ValueError)
 async def value_error_handler(request, exc):
-    parts = str(exc).split(":", 1)
-    code  = parts[0].strip() if len(parts) > 1 else "BAD_REQUEST"
-    msg   = parts[1].strip() if len(parts) > 1 else str(exc)
-    return JSONResponse(status_code=400, content={"error": code, "message": msg})
+    msg = str(exc)
+    return JSONResponse(status_code=400, content={"error": "BAD_REQUEST", "message": msg})
 
 
 @app.exception_handler(Exception)
