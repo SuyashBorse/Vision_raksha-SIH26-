@@ -5,10 +5,10 @@
 // Step 3: Multi-Modal AI Diagnosis & Doctor Triage
 
 import { useState, useEffect } from "react";
-import { Loader2, UserPlus, WifiOff, Clock, ShieldCheck, HeartPulse, Activity, Eye, FileText, ArrowRight } from "lucide-react";
+import { Loader2, UserPlus, WifiOff, Clock, ShieldCheck, HeartPulse, Activity, Eye, FileText, ArrowRight, Send, X, ChevronDown, Download } from "lucide-react";
 import ImageCapture   from "../components/ImageCapture";
 import ResultSection  from "../components/ResultSection";
-import { analyseImage, validateScreening, createPatient } from "../utils/api";
+import { analyseImage, validateScreening, createPatient, listDoctors, shareReport, getReportUrl } from "../utils/api";
 import { enqueueImage, getPendingCount } from "../utils/offlineQueue";
 
 const STEPS = ["Patient Intake", "Fundus Import", "AI Diagnostic Report"];
@@ -32,6 +32,14 @@ export default function ScreenPage() {
   const [error, setError]       = useState(null);
   const [queued, setQueued]     = useState(false);
   const [pendingCount, setPending] = useState(0);
+
+  // Share report modal state
+  const [shareModal, setShareModal]   = useState(false);
+  const [doctors, setDoctors]         = useState([]);
+  const [selectedDoc, setSelectedDoc] = useState("");
+  const [ashaNotes, setAshaNotes]     = useState("");
+  const [sharing, setSharing]         = useState(false);
+  const [shareSuccess, setShareSuccess] = useState(false);
 
   useEffect(() => {
     getPendingCount().then(setPending).catch(() => {});
@@ -116,6 +124,31 @@ export default function ScreenPage() {
       });
     } catch (err) {
       console.error("Validation error:", err);
+    }
+  };
+
+  const openShareModal = async () => {
+    setShareModal(true);
+    setShareSuccess(false);
+    try {
+      const docs = await listDoctors();
+      setDoctors(docs);
+      if (docs.length > 0) setSelectedDoc(docs[0].user_id);
+    } catch {
+      setDoctors([]);
+    }
+  };
+
+  const handleShare = async () => {
+    if (!selectedDoc || !result?.screening_id) return;
+    setSharing(true);
+    try {
+      await shareReport(result.screening_id, selectedDoc, ashaNotes);
+      setShareSuccess(true);
+    } catch (err) {
+      console.error("Share failed:", err);
+    } finally {
+      setSharing(false);
     }
   };
 
@@ -393,15 +426,132 @@ export default function ScreenPage() {
                 Patient: <span className="font-semibold text-[#263746]">{vitals.name}</span> | ABHA: <span className="font-mono text-[#263746]">{vitals.abha_id}</span>
               </p>
             </div>
-            <button
-              onClick={reset}
-              className="btn-primary text-xs py-2 px-4"
-            >
-              + Screen Next Patient
-            </button>
+            <div className="flex items-center gap-2">
+              {result?.screening_id && (
+                <a
+                  href={getReportUrl(result.screening_id)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-outline text-xs py-2 px-4 gap-2 no-underline"
+                >
+                  <Download size={14} />
+                  Download PDF
+                </a>
+              )}
+              <button
+                onClick={openShareModal}
+                className="btn-primary text-xs py-2 px-4 gap-2 bg-[#22AEB0] hover:bg-[#1d9ea0]"
+              >
+                <Send size={14} />
+                Share with Doctor
+              </button>
+              <button onClick={reset} className="btn-outline text-xs py-2 px-4">
+                + Screen Next
+              </button>
+            </div>
           </div>
 
           <ResultSection result={result} onValidate={handleValidate} />
+        </div>
+      )}
+
+      {/* ── Share Report Modal ──────────────────────────────── */}
+      {shareModal && (
+        <div className="fixed inset-0 bg-[#1F2F42]/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl shadow-2xl border border-[#E1E9EC] w-full max-w-md p-8 relative">
+            <button
+              onClick={() => setShareModal(false)}
+              className="absolute top-5 right-5 text-[#94A1AB] hover:text-[#1F2F42] transition cursor-pointer"
+            >
+              <X size={20} />
+            </button>
+
+            {shareSuccess ? (
+              <div className="text-center py-4">
+                <div className="w-16 h-16 bg-[#E8F7F6] rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Send size={28} className="text-[#22AEB0]" />
+                </div>
+                <h3 className="text-lg font-bold text-[#1F2F42] mb-2">Report Shared!</h3>
+                <p className="text-sm text-[#657685]">
+                  The report has been sent to the doctor for review. You'll see their response in <strong>My Reports</strong>.
+                </p>
+                <button
+                  onClick={() => setShareModal(false)}
+                  className="btn-primary w-full mt-6 py-3 text-sm"
+                >
+                  Done
+                </button>
+              </div>
+            ) : (
+              <>
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="p-2.5 bg-[#E8F7F6] rounded-xl">
+                    <Send size={20} className="text-[#22AEB0]" />
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-bold text-[#1F2F42]">Share Report with Doctor</h2>
+                    <p className="text-xs text-[#94A1AB]">Select a doctor and add optional notes</p>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-[#657685] mb-1.5">Select Doctor *</label>
+                    {doctors.length === 0 ? (
+                      <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-700 font-medium">
+                        No doctors available. Ask your admin to add doctor accounts.
+                      </div>
+                    ) : (
+                      <select
+                        className="input-themed"
+                        value={selectedDoc}
+                        onChange={e => setSelectedDoc(e.target.value)}
+                      >
+                        {doctors.map(d => (
+                          <option key={d.user_id} value={d.user_id}>
+                            {d.name}{d.phc_id ? ` — ${d.phc_id}` : ""}
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-[#657685] mb-1.5">
+                      Notes to Doctor <span className="text-[#94A1AB] font-normal">(optional)</span>
+                    </label>
+                    <textarea
+                      rows={3}
+                      className="input-themed resize-none"
+                      placeholder="e.g. Patient complained of blurring vision for 2 months..."
+                      value={ashaNotes}
+                      onChange={e => setAshaNotes(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => setShareModal(false)}
+                      className="flex-1 px-4 py-3 text-sm font-semibold text-[#657685] bg-[#F7FAFB] border border-[#E1E9EC] rounded-xl hover:bg-[#E1E9EC] transition cursor-pointer"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleShare}
+                      disabled={sharing || !selectedDoc}
+                      className="flex-1 btn-primary py-3 text-sm gap-2"
+                    >
+                      {sharing ? (
+                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      ) : (
+                        <><Send size={14} /> Send to Doctor</>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
         </div>
       )}
     </div>

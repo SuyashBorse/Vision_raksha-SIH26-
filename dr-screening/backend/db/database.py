@@ -30,6 +30,34 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 
+def _migrate_columns():
+    """
+    Safely add new columns to existing SQLite tables.
+    SQLite does not support ALTER TABLE ADD COLUMN IF NOT EXISTS,
+    so we catch the OperationalError when the column already exists.
+    """
+    migrations = [
+        # (table, column, definition)
+        ("users",     "username",              "TEXT UNIQUE"),
+        ("users",     "is_active",             "INTEGER DEFAULT 1"),
+        ("screenings","report_status",         "TEXT DEFAULT 'draft'"),
+        ("screenings","shared_to_doctor_id",   "TEXT"),
+        ("screenings","asha_notes",            "TEXT"),
+    ]
+    with engine.connect() as conn:
+        for table, column, definition in migrations:
+            try:
+                conn.execute(
+                    __import__("sqlalchemy").text(
+                        f"ALTER TABLE {table} ADD COLUMN {column} {definition}"
+                    )
+                )
+                conn.commit()
+            except Exception:
+                # Column already exists — skip
+                pass
+
+
 def get_db():
     """FastAPI dependency — yields DB session, closes on exit."""
     db = SessionLocal()
@@ -40,6 +68,10 @@ def get_db():
 
 
 def init_db():
-    """Create all tables on startup (if not exist)."""
-    from db.models import Patient, Screening, Validation, User, PHC, District, FollowUp, AuditLog  # noqa
+    """Create all tables on startup (if not exist) and add missing columns."""
+    from db.models import Patient, Screening, Validation, User, PHC, District, FollowUp, AuditLog, DoctorReview  # noqa
     Base.metadata.create_all(bind=engine)
+
+    # ── SQLite column migrations (safe: ADD COLUMN IF NOT EXISTS) ──
+    # Needed when new columns are added to existing tables
+    _migrate_columns()

@@ -54,19 +54,22 @@ class User(Base):
 
     id            = Column(String(20), primary_key=True, default=lambda: _gen_id("usr"))
     name          = Column(String(100), nullable=False)
+    username      = Column(String(60), unique=True, nullable=True)   # simple login username
     email         = Column(String(100), unique=True, nullable=False)
     password_hash = Column(Text, nullable=False)
     role          = Column(
         String(20),
-        CheckConstraint("role IN ('field_worker','doctor','officer','admin')"),
+        CheckConstraint("role IN ('asha','doctor','field_worker','officer','admin')"),
         nullable=False,
-        default="field_worker"
+        default="asha"
     )
+    is_active     = Column(Boolean, default=True)
     phc_id        = Column(String(20), ForeignKey("phcs.id"), nullable=True)
     created_at    = Column(DateTime(timezone=True), default=_now)
 
     phc           = relationship("PHC", back_populates="users")
     validations   = relationship("Validation", back_populates="doctor")
+    doctor_reviews = relationship("DoctorReview", back_populates="doctor", foreign_keys="DoctorReview.doctor_id")
 
 
 # ── Patient ─────────────────────────────────────────────────
@@ -130,6 +133,16 @@ class Screening(Base):
     model_version     = Column(String(50), nullable=True, default="efficientnet_b5_v1")
     screened_by       = Column(String(20), nullable=True)  # user_id from JWT
 
+    # Report sharing workflow
+    report_status       = Column(
+        String(30),
+        CheckConstraint("report_status IN ('draft','pending_review','reviewed')"),
+        nullable=False,
+        default="draft"
+    )
+    shared_to_doctor_id = Column(String(20), ForeignKey("users.id"), nullable=True)
+    asha_notes          = Column(Text, nullable=True)  # notes from ASHA when sharing
+
     # Status
     validated     = Column(Boolean, default=False)
     created_at    = Column(DateTime(timezone=True), default=_now)
@@ -138,6 +151,9 @@ class Screening(Base):
     phc           = relationship("PHC", back_populates="screenings")
     validation    = relationship("Validation", back_populates="screening",
                                  uselist=False)
+    doctor_review = relationship("DoctorReview", back_populates="screening",
+                                 uselist=False)
+    shared_doctor = relationship("User", foreign_keys=[shared_to_doctor_id])
 
 
 # ── Validation (Doctor Review) ──────────────────────────────
@@ -159,6 +175,29 @@ class Validation(Base):
 
     screening       = relationship("Screening", back_populates="validation")
     doctor          = relationship("User", back_populates="validations")
+
+
+# ── DoctorReview (Full clinical review by doctor) ──────────
+class DoctorReview(Base):
+    __tablename__ = "doctor_reviews"
+
+    id                      = Column(Integer, primary_key=True, autoincrement=True)
+    screening_id            = Column(String(30), ForeignKey("screenings.id"), unique=True, nullable=False)
+    doctor_id               = Column(String(20), ForeignKey("users.id"), nullable=True)
+    confirmed_grade         = Column(SmallInteger, nullable=True)      # 0–4
+    confirmed_grade_label   = Column(String(30), nullable=True)
+    review_description      = Column(Text, nullable=False)             # full clinical review
+    treatment_recommendation = Column(Text, nullable=True)
+    urgency                 = Column(
+        String(20),
+        CheckConstraint("urgency IN ('routine','urgent','emergency')"),
+        nullable=False,
+        default="routine"
+    )
+    reviewed_at             = Column(DateTime(timezone=True), default=_now)
+
+    screening  = relationship("Screening", back_populates="doctor_review")
+    doctor     = relationship("User", back_populates="doctor_reviews", foreign_keys=[doctor_id])
 
 
 # ── FollowUp (Automated Reminder Scheduling) ────────────────
