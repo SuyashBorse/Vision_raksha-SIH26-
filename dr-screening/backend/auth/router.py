@@ -1,7 +1,8 @@
 # backend/auth/router.py
-# POST /auth/login   — issue JWT
-# POST /auth/refresh — extend session
-# GET  /auth/me      — current user info
+# POST /auth/login    — issue JWT (supports username OR email)
+# POST /auth/register — admin-only: create new user
+# POST /auth/refresh  — extend session
+# GET  /auth/me       — current user info
 
 import os
 import logging
@@ -16,7 +17,7 @@ from sqlalchemy.orm import Session
 from db.database import get_db
 from db.models   import User
 from auth.jwt    import (
-    verify_password, create_access_token,
+    verify_password, hash_password, create_access_token,
     get_current_user, TokenData
 )
 
@@ -46,6 +47,14 @@ class LoginResponse(BaseModel):
     name:         str
     phc_id:       str | None = None
 
+class RegisterRequest(BaseModel):
+    name:     str
+    username: str
+    password: str
+    role:     str          # "asha" | "doctor" | "admin"
+    phc_id:   str | None = None
+    email:    str | None = None  # optional, auto-generated if missing
+
 
 # ── POST /auth/login ──────────────────────────────────────────
 @router.post("/login", response_model=LoginResponse, summary="Login and get JWT")
@@ -54,9 +63,17 @@ def login(body: LoginRequest, db: Session = Depends(get_db)):
     user_data = None
     db_user   = None
 
-    # 1. Try database first (username treated as email)
-    db_user = db.query(User).filter(User.email == body.username).first()
+    # 1. Try DB — match by username OR email
+    db_user = (
+        db.query(User).filter(User.username == body.username).first()
+        or db.query(User).filter(User.email == body.username).first()
+    )
     if db_user:
+        if not db_user.is_active:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail={"error": "ACCOUNT_DISABLED", "message": "Your account has been disabled. Contact your administrator."}
+            )
         if not verify_password(body.password, db_user.password_hash):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
@@ -82,9 +99,9 @@ def login(body: LoginRequest, db: Session = Depends(get_db)):
             "asha": DEMO_USERS["asha_demo"],
             "asha_demo": DEMO_USERS["asha_demo"],
         }
-        
+
         demo = demo_map.get(user_key) or DEMO_USERS.get(user_key)
-        
+
         if demo:
             valid_passwords = {demo["password"], "admin", "admin123", "password", "doctor123", "asha123", "123456"}
             if body.password not in valid_passwords:
@@ -127,6 +144,67 @@ def login(body: LoginRequest, db: Session = Depends(get_db)):
     )
 
 
+# ── POST /auth/register  (admin-only) ─────────────────────────
+@router.post("/register", summary="Admin creates a new user account", status_code=201)
+def register(
+    body:    RegisterRequest,
+    caller:  TokenData = Depends(get_current_user),
+    db:      Session   = Depends(get_db),
+):
+    if caller.role != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={"error": "FORBIDDEN", "message": "Only admins can create user accounts"}
+        )
+
+    allowed_roles = {"asha", "doctor", "admin", "field_worker", "officer"}
+    if body.role not in allowed_roles:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail={"error": "INVALID_ROLE", "message": f"Role must be one of: {allowed_roles}"}
+        )
+
+    # Check username uniqueness
+    if db.query(User).filter(User.username == body.username).first():
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail={"error": "USERNAME_TAKEN", "message": f"Username '{body.username}' is already in use"}
+        )
+
+    # Auto-generate email if not provided
+    email = body.email or f"{body.username}@visionraksha.local"
+
+    if db.query(User).filter(User.email == email).first():
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail={"error": "EMAIL_TAKEN", "message": f"Email '{email}' is already registered"}
+        )
+
+    new_user = User(
+        name          = body.name,
+        username      = body.username,
+        email         = email,
+        password_hash = hash_password(body.password),
+        role          = body.role,
+        phc_id        = body.phc_id,
+        is_active     = True,
+    )
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+
+    logger.info(f"Admin {caller.user_id} created user: {new_user.username} | role={new_user.role}")
+
+    return {
+        "user_id":  new_user.id,
+        "username": new_user.username,
+        "name":     new_user.name,
+        "role":     new_user.role,
+        "phc_id":   new_user.phc_id,
+        "email":    new_user.email,
+    }
+
+
 # ── GET /auth/me ──────────────────────────────────────────────
 @router.get("/me", summary="Get current user info")
 def me(user: TokenData = Depends(get_current_user)):
@@ -138,12 +216,61 @@ def me(user: TokenData = Depends(get_current_user)):
     }
 
 
-# ── POST /auth/refresh ────────────────────────────────────────
-@router.post("/refresh", summary="Refresh JWT token")
-def refresh(user: TokenData = Depends(get_current_user)):
-    new_token = create_access_token(user)
-    return {
-        "access_token": new_token,
-        "token_type":   "bearer",
-        "expires_in":   480 * 60,
-    }
+# ── POST /auth/register-admin  (public — admin self sign-up) ──
+# Only creates accounts with role="admin"
+# ASHA & Doctor accounts must be created by an existing admin via /api/admin/users
+class AdminRegisterRequest(BaseModel):
+    name:     str
+    username: str
+    password: str
+
+@router.post("/register-admin", summary="Public admin self-registration", status_code=201)
+def register_admin(body: AdminRegisterRequest, db: Session = Depends(get_db)):
+    if len(body.password) < 6:
+        raise HTTPException(
+            status_code=422,
+            detail={"error": "WEAK_PASSWORD", "message": "Password must be at least 6 characters"}
+        )
+
+    if db.query(User).filter(User.username == body.username).first():
+        raise HTTPException(
+            status_code=409,
+            detail={"error": "USERNAME_TAKEN", "message": f"Username '{body.username}' is already taken"}
+        )
+
+    email = f"{body.username}@visionraksha.local"
+    if db.query(User).filter(User.email == email).first():
+        raise HTTPException(
+            status_code=409,
+            detail={"error": "EMAIL_TAKEN", "message": "This username is already registered"}
+        )
+
+    new_admin = User(
+        name          = body.name,
+        username      = body.username,
+        email         = email,
+        password_hash = hash_password(body.password),
+        role          = "admin",   # always admin — hardcoded
+        is_active     = True,
+    )
+    db.add(new_admin)
+    db.commit()
+    db.refresh(new_admin)
+
+    logger.info(f"New admin registered: {new_admin.username}")
+
+    # Auto-login: issue token immediately after registration
+    token = create_access_token(TokenData(
+        user_id = new_admin.id,
+        role    = "admin",
+        phc_id  = None,
+    ))
+
+    return LoginResponse(
+        access_token = token,
+        user_id      = new_admin.id,
+        role         = "admin",
+        name         = new_admin.name,
+        phc_id       = None,
+    )
+

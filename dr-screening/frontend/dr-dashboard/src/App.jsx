@@ -3,17 +3,23 @@ import { BrowserRouter, Routes, Route, NavLink, useLocation, Navigate } from "re
 import { useState, useEffect } from "react";
 import {
   Eye, LayoutDashboard, Users, Home as HomeIcon,
-  Menu, X, Wifi, WifiOff, LogOut, Bell, ChevronDown
+  Menu, X, Wifi, WifiOff, LogOut, ChevronDown,
+  Send, ClipboardList, ShieldCheck
 } from "lucide-react";
+
+import NotificationPanel from "./components/NotificationPanel";
 
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import LoginPage from "./pages/LoginPage";
 
 // Pages
-import HomePage      from "./pages/HomePage";
-import ScreenPage    from "./pages/ScreenPage";
-import DashboardPage from "./pages/DashboardPage";
-import PatientsPage  from "./pages/PatientsPage";
+import HomePage        from "./pages/HomePage";
+import ScreenPage      from "./pages/ScreenPage";
+import DashboardPage   from "./pages/DashboardPage";
+import PatientsPage    from "./pages/PatientsPage";
+import AdminPage       from "./pages/AdminPage";
+import DoctorReviewPage from "./pages/DoctorReviewPage";
+import ReportsPage     from "./pages/ReportsPage";
 
 /* ── VisionRaksha Eye + AI Logo SVG ── */
 function VRLogo({ size = 32 }) {
@@ -35,16 +41,35 @@ function VRLogo({ size = 32 }) {
   );
 }
 
-const NAV_AUTH = [
-  { to: "/",         icon: HomeIcon,        label: "Home" },
-  { to: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
-  { to: "/screen",   icon: Eye,             label: "Screen" },
-  { to: "/patients", icon: Users,           label: "Patients" },
+// Role-based navigation
+const NAV_ASHA = [
+  { to: "/screen",   icon: Eye,           label: "Screen"      },
+  { to: "/patients", icon: Users,         label: "Patients"    },
+  { to: "/reports",  icon: ClipboardList, label: "My Reports"  },
+];
+
+const NAV_DOCTOR = [
+  { to: "/dashboard",  icon: LayoutDashboard, label: "Dashboard"    },
+  { to: "/reviews",    icon: Send,            label: "Review Queue" },
+];
+
+const NAV_ADMIN = [
+  { to: "/dashboard",   icon: LayoutDashboard, label: "Dashboard"    },
+  { to: "/admin",       icon: ShieldCheck,     label: "Manage Users" },
+  { to: "/screen",      icon: Eye,             label: "Screen"       },
+  { to: "/patients",    icon: Users,           label: "Patients"     },
+  { to: "/reviews",     icon: Send,            label: "Reviews"      },
 ];
 
 const NAV_PUBLIC = [
-  { to: "/",      icon: HomeIcon, label: "Home" },
+  { to: "/", icon: HomeIcon, label: "Home" },
 ];
+
+function getNavForRole(role) {
+  if (role === "doctor")  return NAV_DOCTOR;
+  if (role === "admin")   return NAV_ADMIN;
+  return NAV_ASHA; // asha / field_worker / default
+}
 
 function AuthenticatedApp() {
   const { user, logout } = useAuth();
@@ -66,10 +91,13 @@ function AuthenticatedApp() {
     setProfileOpen(false);
   }, [location.pathname]);
 
+  const navItems = getNavForRole(user?.role);
+
   const roleBadge = {
-    asha:   { label: "ASHA Worker", color: "bg-teal-soft text-navy" },
-    doctor: { label: "Doctor",      color: "bg-teal-light text-teal" },
-    admin:  { label: "Admin",       color: "bg-teal/10 text-teal-bright" },
+    asha:         { label: "ASHA Worker",  color: "bg-teal-soft text-navy" },
+    field_worker: { label: "ASHA Worker",  color: "bg-teal-soft text-navy" },
+    doctor:       { label: "Doctor",       color: "bg-teal-light text-teal" },
+    admin:        { label: "Admin",        color: "bg-teal/10 text-teal-bright" },
   }[user?.role] || { label: user?.role, color: "bg-gray-100 text-gray-600" };
 
   const displayName = user?.name || user?.user_id || "User";
@@ -82,7 +110,7 @@ function AuthenticatedApp() {
           <div className="flex items-center justify-between h-16">
 
             {/* Left: Logo */}
-            <div className="flex items-center gap-3 flex-shrink-0">
+            <NavLink to="/dashboard" className="flex items-center gap-3 flex-shrink-0 cursor-pointer">
               <VRLogo size={36} />
               <div className="hidden sm:block">
                 <h1 className="text-white font-bold text-lg leading-tight tracking-wide">
@@ -92,15 +120,15 @@ function AuthenticatedApp() {
                   AI for Healthier Tomorrows
                 </p>
               </div>
-            </div>
+            </NavLink>
 
             {/* Center: Nav Links (desktop) */}
             <div className="hidden md:flex items-center gap-1">
-              {NAV_AUTH.map(({ to, icon: Icon, label }) => (
+              {navItems.map(({ to, icon: Icon, label }) => (
                 <NavLink
                   key={to}
                   to={to}
-                  end={to === "/"}
+                  end={to === "/dashboard"}
                   className={({ isActive }) =>
                     `flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200
                      ${isActive
@@ -125,10 +153,7 @@ function AuthenticatedApp() {
                   </span>
               }
 
-              <button className="relative text-[#94A1AB] hover:text-white transition p-2 rounded-lg hover:bg-white/5">
-                <Bell size={18} />
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#22AEB0] rounded-full"></span>
-              </button>
+              <NotificationPanel />
 
               <div className="relative">
                 <button
@@ -176,11 +201,11 @@ function AuthenticatedApp() {
 
         {mobileMenuOpen && (
           <div className="md:hidden bg-[#26394D] border-t border-white/10 px-4 py-3 space-y-1">
-            {NAV_AUTH.map(({ to, icon: Icon, label }) => (
+            {navItems.map(({ to, icon: Icon, label }) => (
               <NavLink
                 key={to}
                 to={to}
-                end={to === "/"}
+                end={to === "/dashboard"}
                 className={({ isActive }) =>
                   `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all
                    ${isActive
@@ -204,10 +229,23 @@ function AuthenticatedApp() {
 
       <main className="flex-1">
         <Routes>
-          <Route path="/"          element={<HomePage />} />
+          {/* Shared */}
+          <Route path="/" element={<Navigate to={user?.role === "doctor" ? "/dashboard" : user?.role === "admin" ? "/dashboard" : "/screen"} replace />} />
           <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/screen"    element={<ScreenPage />} />
-          <Route path="/patients"  element={<PatientsPage />} />
+
+          {/* ASHA worker routes */}
+          <Route path="/screen"   element={<ScreenPage />} />
+          <Route path="/patients" element={<PatientsPage />} />
+          <Route path="/reports"  element={<ReportsPage />} />
+
+          {/* Doctor routes */}
+          <Route path="/reviews"  element={<DoctorReviewPage />} />
+
+          {/* Admin routes */}
+          <Route path="/admin"    element={<AdminPage />} />
+
+          {/* Fallback */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
     </div>

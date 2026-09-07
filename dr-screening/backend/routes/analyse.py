@@ -164,6 +164,7 @@ async def analyse(
         dme_notes      = result.dme_notes,
         progression_risk = result.progression_risk_5yr,
         doctor_summary = result.doctor_summary,
+        screened_by    = user.user_id,
         validated      = False,
     )
     db.add(screening)
